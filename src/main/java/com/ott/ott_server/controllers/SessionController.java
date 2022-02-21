@@ -1,36 +1,46 @@
 package com.ott.ott_server.controllers;
 
-import com.ott.ott_server.application.AuthenticationService;
-import com.ott.ott_server.dto.TokenResponseData;
-import com.ott.ott_server.dto.UserLoginData;
-import com.ott.ott_server.filter.JwtFilter;
+import com.ott.ott_server.application.UserService;
+import com.ott.ott_server.domain.User;
+import com.ott.ott_server.dto.user.UserLoginRequestData;
+import com.ott.ott_server.dto.user.UserLoginResponseData;
+import com.ott.ott_server.dto.user.UserRegistrationData;
+import com.ott.ott_server.dto.user.UserResultData;
+import com.ott.ott_server.provider.JwtProvider;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 
-@RestController
-@RequestMapping("/sessions")
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/session")
 public class SessionController {
 
-    private final AuthenticationService authenticationService;
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
-    public ResponseEntity<TokenResponseData> authorize(@RequestBody UserLoginData loginData) {
+    @ApiOperation(value = "로그인", notes = "아이디로 로그인을 합니다.")
+    @GetMapping("/login")
+    public String login(@RequestBody UserLoginRequestData userLoginRequestData) {
+        String email = userLoginRequestData.getEmail();
+        String password = userLoginRequestData.getPassword();
+        UserLoginResponseData userLoginData = userService.login(email, password);
 
-        TokenResponseData tokenResponseData = authenticationService.login(loginData);
-
-        // 1. Response Header에 token 값을 넣어준다.
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + tokenResponseData.getToken());
-
-        // 2. Response Body에 token 값을 넣어준다.
-        return new ResponseEntity<>(tokenResponseData, httpHeaders, HttpStatus.OK);
+        String token = jwtProvider.createToken(String.valueOf(userLoginData.getId()), userLoginData.getRoles());
+        return token;
     }
+
+    @ApiOperation(value = "회원가입", notes = "회원가입을 합니다.")
+    @PostMapping("/signup")
+    public UserResultData signup(
+            @RequestBody @Valid UserRegistrationData userRegistrationData) {
+        userRegistrationData.setPassword(passwordEncoder.encode(userRegistrationData.getPassword()));
+        User user = userService.signup(userRegistrationData);
+        return user.toUserResultData();
+    }
+
 }

@@ -1,15 +1,12 @@
 package com.ott.ott_server.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+import static javax.persistence.FetchType.LAZY;
+
+@Getter
 @Entity
 @Builder
 @AllArgsConstructor
@@ -20,5 +17,11 @@ public class Ott extends BaseTimeEntity{
     private Long id;
 
     private String name;
+
+    @ManyToOne(fetch = LAZY)
+    private Movie movie;
+
+    @ManyToOne(fetch = LAZY)
+    private User user;
 
 }

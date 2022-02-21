@@ -1,31 +1,51 @@
 package com.ott.ott_server.domain;
 
-import com.ott.ott_server.dto.UserResultData;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ott.ott_server.domain.enums.Gender;
+import com.ott.ott_server.dto.user.UserLoginResponseData;
+import com.ott.ott_server.dto.user.UserResultData;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 
-import static com.ott.ott_server.domain.Role.ROLE_USER;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseTimeEntity {
+public class User extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
     private String password;
 
     private String nickname;
 
-    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    private Role role = ROLE_USER;
+    private List<String> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<Ott> userOtt = new ArrayList<>();
+
+    private String birth;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Builder.Default
     private boolean deleted = false;
@@ -33,9 +53,57 @@ public class User extends BaseTimeEntity {
     @Builder.Default
     private String imageUrl = "";
 
+    public void destroy() {
+        deleted = true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles
+                .stream().map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public UserResultData toUserResultData() {
         return UserResultData.builder()
                 .id(id)
+                .birth(birth)
+                .gender(gender)
                 .create_at(getCreateAt())
                 .update_at(getUpdateAt())
                 .nickname(nickname)
@@ -43,25 +111,21 @@ public class User extends BaseTimeEntity {
                 .build();
     }
 
+    public UserLoginResponseData toUserLoginResponseData() {
+        return UserLoginResponseData.builder()
+                .id(id)
+                .email(email)
+                .nickname(nickname)
+                .roles(roles)
+                .createAt(getCreateAt())
+                .updateAt(getUpdateAt())
+                .build();
+    }
+
     public void changeWith(User source) {
         nickname = source.getNickname();
         imageUrl = source.getImageUrl();
         password = source.getPassword();
-    }
-
-    public void destroy() {
-        deleted = true;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Builder
-    public User(String email, String password, String name, Role role) {
-        this.email = email;
-        this.password = password;
-        this.role = role;
     }
 
 }

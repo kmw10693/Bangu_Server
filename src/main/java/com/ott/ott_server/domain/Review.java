@@ -1,11 +1,16 @@
 package com.ott.ott_server.domain;
 
+import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.review.ReviewResponseData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -20,13 +25,12 @@ public class Review extends BaseTimeEntity{
     private Long id;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = LAZY)
-    private Ott ott;
-
-    @ManyToOne(fetch = LAZY)
-    private Genre genre;
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
+    private Movie movie;
 
     private String attention;
 
@@ -34,9 +38,25 @@ public class Review extends BaseTimeEntity{
 
     private String content;
 
-    private String score;
+    private BigDecimal score;
+
+    @Builder.Default
+    private boolean revealed = false;
 
     @Builder.Default
     private boolean deleted = false;
+
+    public ReviewResponseData toReviewResponseData() {
+
+        return ReviewResponseData.builder()
+                .id(id)
+                .attention(attention)
+                .movieResponseData(movie.toMovieResponseData())
+                .dialogue(dialogue)
+                .content(content)
+                .userId(user.getId())
+                .score(score)
+                .build();
+    }
 
 }
