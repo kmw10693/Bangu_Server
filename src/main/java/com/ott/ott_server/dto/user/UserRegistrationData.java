@@ -45,25 +45,28 @@ public class UserRegistrationData extends BaseTimeEntity {
     private String birth;
 
     // 구독하는 OTT
-    @Builder.Default
     @ApiParam(value = "tving 구독 여부", required = true, example = "true")
-    private boolean tving = true;
+    private boolean tving;
 
-    @Builder.Default
     @ApiParam(value = "watcha 구독 여부", required = true, example = "true")
-    private boolean watcha = true;
+    private boolean watcha;
 
-    @Builder.Default
     @ApiParam(value = "netflix 구독 여부", required = true, example = "true")
-    private boolean netflix = true;
+    private boolean netflix;
 
-    @Builder.Default
     @ApiParam(value = "wavve 구독 여부", required = true, example = "true")
-    private boolean wavve = true;
+    private boolean wavve;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
     private Gender gender;
+
+    public UserRegistrationData() {
+        tving = false;
+        watcha = false;
+        netflix = false;
+        wavve = false;
+    }
 
     public User toEntity() {
         return User.builder()

@@ -28,6 +28,9 @@ public class UserResultData {
     @ApiModelProperty(value = "성별", example = "M")
     private Gender gender;
 
+    @Builder.Default
+    private List<UserOttResponseData> userOttResponseData = new ArrayList<>();
+
     @ApiModelProperty(value = "사용자 생성 시각", example = "2022-01-24T16:19:01.359146")
     private LocalDateTime create_at;
 

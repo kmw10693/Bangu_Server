@@ -40,7 +40,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     @Builder.Default
-    private List<Ott> userOtt = new ArrayList<>();
+    private List<UserOtt> userOtt = new ArrayList<>();
 
     private String birth;
 
@@ -104,6 +104,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .id(id)
                 .birth(birth)
                 .gender(gender)
+                .userOttResponseData(userOtt.stream().map(UserOtt::toUserOttResponseData).collect(Collectors.toList()))
                 .create_at(getCreateAt())
                 .update_at(getUpdateAt())
                 .nickname(nickname)
