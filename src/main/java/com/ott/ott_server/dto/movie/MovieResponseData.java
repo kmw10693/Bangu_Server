@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -24,7 +26,16 @@ public class MovieResponseData {
     @ApiModelProperty(value = "감독", example = "봉준호")
     private String director;
 
+    @ApiModelProperty(value = "제작년도", example = "2017")
+    private String birth;
+
+    @Builder.Default
+    private List<MovieOttResponseData> movieOtts = new ArrayList<>();
+
     @ApiModelProperty(value = "등장인물", example = "배두나, 조승우")
     private String actor;
+
+    @ApiModelProperty(value = "삭제여부", example = "false")
+    private boolean deleted;
 
 }

@@ -18,9 +18,5 @@ public class Ott extends BaseTimeEntity{
 
     private String name;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "movie_id")
-    private Movie movie;
-
 
 }

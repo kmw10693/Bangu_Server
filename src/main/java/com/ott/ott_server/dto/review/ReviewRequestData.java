@@ -15,12 +15,14 @@ import java.math.BigDecimal;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ApiModel(value="리뷰 등록 요청 정보")
 public class ReviewRequestData {
 
-    @Valid
-    private MovieResponseData movieResponseData;
+    @ApiModelProperty(value = "별점", required = true, example = "4.5")
+    @NotNull(message = "영화 식별자를 입력해주세요.")
+    private Long movieId;
+
+    private ReviewOttRequestData reviewOttRequestData;
 
     @ApiModelProperty(value = "별점", required = true, example = "4.5")
     @DecimalMin("0") @DecimalMax("5")
@@ -39,5 +41,11 @@ public class ReviewRequestData {
     @NotNull(message = "리뷰를 입력해주세요.")
     private String content;
 
+    @ApiModelProperty(value = "공개 여부", required = true, example = "true")
+    private boolean revealed;
+
+    public ReviewRequestData() {
+        revealed = true;
+    }
 
 }

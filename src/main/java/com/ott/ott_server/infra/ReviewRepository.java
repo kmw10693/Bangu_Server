@@ -12,6 +12,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Optional<Review> findByIdAndDeletedIsFalse(Long id);
 
-    List<Review> findByMovie_GenreIdAndMovie_OttsId(Long genreId, Long movieId);
-
+    List<Review> findByMovieGenreNameAndMovieOttsOttName(String genre, String ott);
 }

@@ -1,11 +1,9 @@
 package com.ott.ott_server.domain;
 
 import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -18,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Builder
 @AllArgsConstructor
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseTimeEntity{
     @Id
@@ -41,7 +40,7 @@ public class Review extends BaseTimeEntity{
     private BigDecimal score;
 
     @Builder.Default
-    private boolean revealed = false;
+    private boolean revealed = true;
 
     @Builder.Default
     private boolean deleted = false;
@@ -57,6 +56,18 @@ public class Review extends BaseTimeEntity{
                 .userId(user.getId())
                 .score(score)
                 .build();
+    }
+
+    public void update(ReviewModificationData reviewModificationData){
+        this.revealed = reviewModificationData.isRevealed();
+        this.dialogue = reviewModificationData.getDialogue();
+        this.content = reviewModificationData.getContent();
+        this.attention = reviewModificationData.getAttention();
+        this.score = reviewModificationData.getScore();
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
 }

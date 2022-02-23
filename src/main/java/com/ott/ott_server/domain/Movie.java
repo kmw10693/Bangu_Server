@@ -10,6 +10,7 @@ import org.hibernate.metamodel.model.domain.spi.MapPersistentAttribute;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -24,7 +25,7 @@ public class Movie extends BaseTimeEntity{
 
     @OneToMany(mappedBy = "movie")
     @Builder.Default
-    private List<Ott> otts = new ArrayList<>();
+    private List<MovieOtt> otts = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "genre_id")
@@ -38,6 +39,8 @@ public class Movie extends BaseTimeEntity{
 
     private String actor;
 
+    private String birth;
+
     @Builder.Default
     private boolean deleted = false;
 
@@ -49,6 +52,9 @@ public class Movie extends BaseTimeEntity{
                 .director(director)
                 .imageUrl(imageUrl)
                 .title(title)
+                .birth(birth)
+                .deleted(deleted)
+                .movieOtts(otts.stream().map(MovieOtt::toMovieOttResponseData).collect(Collectors.toList()))
                 .build();
     }
 

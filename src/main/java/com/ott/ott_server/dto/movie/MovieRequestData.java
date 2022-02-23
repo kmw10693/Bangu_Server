@@ -1,5 +1,6 @@
 package com.ott.ott_server.dto.movie;
 
+import com.ott.ott_server.domain.Movie;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -17,8 +18,13 @@ public class MovieRequestData {
     @ApiModelProperty(value = "제목", example = "비밀의 숲")
     private String title;
 
+    private MovieOttRequestData movieOttRequestData;
+
     @ApiModelProperty(value = "영화 이미지", example = "image.com")
     private String imageUrl;
+
+    @ApiModelProperty(value = "제작년도", example = "2017")
+    private String birth;
 
     @NotBlank
     @ApiModelProperty(value = "감독", example = "봉준호")

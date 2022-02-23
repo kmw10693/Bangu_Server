@@ -46,4 +46,15 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("아이디나 비밀번호가 맞는지 확인해주세요.");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserNotMatchException.class)
+    public ErrorResponse handleUserNotMatch() {
+        return new ErrorResponse("The user ID of the review doesn't match");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FollowAlreadyExistException.class)
+    public ErrorResponse handleFollowAlreadyExist() {
+        return new ErrorResponse("이미 팔로우한 계정입니다!");
+    }
 }
