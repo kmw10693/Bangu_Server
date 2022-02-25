@@ -32,6 +32,9 @@ public class MovieResponseData {
     @Builder.Default
     private List<MovieOttResponseData> movieOtts = new ArrayList<>();
 
+    @ApiModelProperty(value = "장르", example = "drama")
+    private String genre;
+
     @ApiModelProperty(value = "등장인물", example = "배두나, 조승우")
     private String actor;
 

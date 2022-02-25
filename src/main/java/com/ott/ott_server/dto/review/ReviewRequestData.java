@@ -4,6 +4,7 @@ import com.ott.ott_server.dto.movie.MovieRequestData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.*;
 
 import javax.validation.Valid;
@@ -22,7 +23,17 @@ public class ReviewRequestData {
     @NotNull(message = "영화 식별자를 입력해주세요.")
     private Long movieId;
 
-    private ReviewOttRequestData reviewOttRequestData;
+    @ApiParam(value = "tving 선택 여부", required = true, example = "true")
+    private boolean tving;
+
+    @ApiParam(value = "watcha 선택 여부", required = true, example = "true")
+    private boolean watcha;
+
+    @ApiParam(value = "netflix 선택 여부", required = true, example = "true")
+    private boolean netflix;
+
+    @ApiParam(value = "wavve 선택 여부", required = true, example = "true")
+    private boolean wavve;
 
     @ApiModelProperty(value = "별점", required = true, example = "4.5")
     @DecimalMin("0") @DecimalMax("5")
@@ -46,6 +57,11 @@ public class ReviewRequestData {
 
     public ReviewRequestData() {
         revealed = true;
+        tving = false;
+        netflix = false;
+        watcha = false;
+        wavve = false;
     }
+
 
 }

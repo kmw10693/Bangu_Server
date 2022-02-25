@@ -1,7 +1,9 @@
 package com.ott.ott_server.controllers;
 
+import com.ott.ott_server.application.FollowService;
 import com.ott.ott_server.application.UserService;
 import com.ott.ott_server.domain.User;
+import com.ott.ott_server.dto.follow.FollowResultData;
 import com.ott.ott_server.dto.user.UserModificationData;
 import com.ott.ott_server.dto.user.UserResultData;
 import io.swagger.annotations.ApiImplicitParam;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -22,6 +25,7 @@ import java.nio.file.AccessDeniedException;
 public class UserController {
 
     private final UserService userService;
+    private final FollowService followService;
 
     /**
      * 아이디 중복 확인 API
@@ -91,6 +95,40 @@ public class UserController {
     @ApiImplicitParam(name="id", dataType = "integer", value="사용자 식별자")
     public void destroy(@PathVariable Long id) {
         userService.deleteUser(id);
+    }
+
+    /**
+     * 유저 팔로워 조회 API
+     * @param id
+     * @param authentication
+     * @return
+     * @throws AccessDeniedException
+     */
+    @GetMapping("/{id}/follower")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "유저 팔로워 조회",
+            notes = "전달받은 사용자의 식별자로 사용자의 팔로워를 조회합니다.")
+    public List<FollowResultData> getFollower(@PathVariable Long id,
+                                              Authentication authentication) {
+        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        User user = userService.getUser(userDetails.getUsername());
+
+        return followService.getFollower(id, user.getId());
+    }
+
+    /**
+     * 유저 팔로잉 조회 API
+     */
+    @GetMapping("/{id}/following")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "유저 팔로잉 조회",
+            notes = "전달받은 사용자의 식별자로 사용자의 팔로잉을 조회합니다.")
+    public List<FollowResultData> getFollowing(@PathVariable Long id,
+                                               Authentication authentication) {
+        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        User user = userService.getUser(userDetails.getUsername());
+
+        return followService.getFollowing(id, user.getId());
     }
 
 }

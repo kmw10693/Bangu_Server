@@ -19,7 +19,7 @@ public class FollowController {
     private final UserService userService;
 
     @PostMapping("/{toUser}")
-    public ResponseEntity<?> followUser(@PathVariable Long toUserId, Authentication authentication) {
+    public ResponseEntity<?> followUser(@PathVariable("toUser") Long toUserId, Authentication authentication) {
         UserDetails userDetails = (UserDetails)authentication.getPrincipal();
         User user = userService.getUser(userDetails.getUsername());
         User toUser = userService.getUser(toUserId);
@@ -28,7 +28,7 @@ public class FollowController {
     }
 
     @DeleteMapping("/{toUserId}")
-    public ResponseEntity<?> unFollowUser(@PathVariable long toUserId, Authentication authentication) {
+    public ResponseEntity<?> unFollowUser(@PathVariable Long toUserId, Authentication authentication) {
         UserDetails userDetails = (UserDetails)authentication.getPrincipal();
         User user = userService.getUser(userDetails.getUsername());
         User toUser = userService.getUser(toUserId);

@@ -1,13 +1,13 @@
 package com.ott.ott_server.application;
 
+import com.ott.ott_server.domain.Genre;
 import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.domain.MovieOtt;
 import com.ott.ott_server.domain.Ott;
-import com.ott.ott_server.dto.movie.MovieOttRequestData;
-import com.ott.ott_server.dto.movie.MovieOttResponseData;
 import com.ott.ott_server.dto.movie.MovieRequestData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.errors.MovieNotFoundException;
+import com.ott.ott_server.infra.GenreRepository;
 import com.ott.ott_server.infra.MovieOttRepository;
 import com.ott.ott_server.infra.MovieRepository;
 import com.ott.ott_server.infra.OttRepository;
@@ -27,6 +27,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final OttRepository ottRepository;
     private final MovieOttRepository movieOttRepository;
+    private final GenreRepository genreRepository;
 
     public List<MovieResponseData> getMovies() {
         List<Movie> movies = movieRepository.findAll();
@@ -53,6 +54,9 @@ public class MovieService {
     }
 
     public Movie registerMovie(MovieRequestData movieRequestData) {
+        Optional<Genre> genre =
+                genreRepository.findByNameContaining(movieRequestData.getGenre());
+
         Movie movie = movieRepository.save(
                 Movie.builder()
                         .actor(movieRequestData.getActor())
@@ -60,26 +64,28 @@ public class MovieService {
                         .birth(movieRequestData.getBirth())
                         .imageUrl(movieRequestData.getImageUrl())
                         .title(movieRequestData.getTitle())
+                        .genre(genre.get())
                         .build()
         );
-        checkSubscribe(movieRequestData.getMovieOttRequestData(), movie);
+        checkSubscribe(movieRequestData, movie);
+
         return movie;
     }
 
-    private void checkSubscribe(MovieOttRequestData movieOttRequestData, Movie movie) {
-        if (movieOttRequestData.isNetflix()) {
+    private void checkSubscribe(MovieRequestData movieRequestData, Movie movie) {
+        if (movieRequestData.isNetflix()) {
             Optional<Ott> ott = findIdByOttName("netflix");
             setMovieOtt(movie, ott);
         }
-        if (movieOttRequestData.isTving()){
+        if (movieRequestData.isTving()){
             Optional<Ott> ott = findIdByOttName("tving");
             setMovieOtt(movie, ott);
         }
-        if(movieOttRequestData.isWatcha()) {
+        if(movieRequestData.isWatcha()) {
             Optional<Ott> ott = findIdByOttName("watcha");
             setMovieOtt(movie, ott);
         }
-        if(movieOttRequestData.isWavve()) {
+        if(movieRequestData.isWavve()) {
             Optional<Ott> ott = findIdByOttName("wavve");
             setMovieOtt(movie, ott);
         }

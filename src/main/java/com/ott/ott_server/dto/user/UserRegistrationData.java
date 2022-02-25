@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collections;
 
@@ -26,12 +27,16 @@ public class UserRegistrationData extends BaseTimeEntity {
     @Size(min=3, max=20)
     @Mapping("email")
     @ApiParam(value = "사용자 이메일", required = true, example = "test@email.com")
+    @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{3,}$",
+            message = "아이디는 영문 대,소문자와 숫자1개 이상씩 포함된 3자 이상의 아이디여야 합니다.")
     private String email;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
     @Size(min=3, max=20)
     @Mapping("password")
     @ApiParam(value = "사용자 비밀번호", required = true, example = "test123")
+    @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{3,}$",
+            message = "비밀번호는 영문 대,소문자와 숫자1개 이상씩 포함된 3자 이상의 비밀번호여야 합니다.")
     private String password;
 
     @NotBlank(message = "닉네임을 입력해주세요.")

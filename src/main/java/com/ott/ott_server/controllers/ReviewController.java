@@ -85,7 +85,7 @@ public class ReviewController {
     public List<ReviewResponseData> list(@PathVariable("ott")
                                    @ApiParam(value = "ott 이름 ex) netflix") String ott,
                                    @PathVariable("genre")
-                                   @ApiParam(value = "ott 이름 ex) netflix") String genre) {
+                                   @ApiParam(value = "genre 이름 ex) drama") String genre) {
 
         return reviewService.getReviews(ott, genre);
     }

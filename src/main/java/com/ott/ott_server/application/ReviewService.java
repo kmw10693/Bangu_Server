@@ -36,6 +36,7 @@ public class ReviewService {
                         .content(reviewRequestData.getContent())
                         .dialogue(reviewRequestData.getDialogue())
                         .movie(movie)
+                        .score(reviewRequestData.getScore())
                         .build()
         );
         return review;

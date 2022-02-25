@@ -54,6 +54,7 @@ public class Movie extends BaseTimeEntity{
                 .title(title)
                 .birth(birth)
                 .deleted(deleted)
+                .genre(genre.getName())
                 .movieOtts(otts.stream().map(MovieOtt::toMovieOttResponseData).collect(Collectors.toList()))
                 .build();
     }
