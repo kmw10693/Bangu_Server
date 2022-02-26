@@ -1,6 +1,7 @@
 package com.ott.ott_server.dto.user;
 
 import com.ott.ott_server.domain.enums.Gender;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,9 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
+@ApiModel(value = "유저 등록 성공 정보")
 public class UserResultData {
+    @ApiModelProperty(value = "사용자 인덱스", example = "1")
     private Long id;
 
     @ApiModelProperty(value = "사용자 이메일", example = "test@email.com")

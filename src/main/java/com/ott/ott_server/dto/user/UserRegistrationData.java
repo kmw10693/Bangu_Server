@@ -4,6 +4,7 @@ import com.github.dozermapper.core.Mapping;
 import com.ott.ott_server.domain.BaseTimeEntity;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.enums.Gender;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ import java.util.Collections;
 @AllArgsConstructor
 @Builder
 @Setter
+@ApiModel(value = "유저 등록 요청 정보")
 public class UserRegistrationData extends BaseTimeEntity {
     @NotBlank(message = "아이디를 입력해주세요.")
     @Size(min=3, max=20)

@@ -33,7 +33,7 @@ public class ReviewResponseData {
     @ApiModelProperty(value = "사용자 프로필 이미지", example = "image.com")
     private String imageUrl;
 
-    @ApiModelProperty(value = "사용자 성별", example = "여성")
+    @ApiModelProperty(value = "사용자 성별")
     private Gender gender;
 
     @ApiModelProperty(value = "생년월일", example = "2001")

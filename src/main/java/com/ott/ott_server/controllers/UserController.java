@@ -33,7 +33,7 @@ public class UserController {
      */
     @ApiOperation(value = "아이디 중복확인",
             notes = "DB에 입력된 아이디의 존재 여부를 리턴합니다. 존재하면 true, 존재하지 않으면 false를 반환합니다.")
-    @ApiImplicitParam(name="userEmail", dataType = "string", value="사용자 아이디")
+    @ApiImplicitParam(name = "userEmail", dataType = "string", value = "사용자 아이디")
     @GetMapping("/emailCheck/{userEmail}")
     public ResponseEntity<Boolean> checkEmail(@PathVariable String userEmail) {
         return ResponseEntity.ok(userService.isDuplicateEmail(userEmail));
@@ -45,7 +45,7 @@ public class UserController {
      */
     @ApiOperation(value = "닉네임 중복확인",
             notes = "DB에 입력된 닉네임의 존재 여부를 리턴합니다. 존재하면 true, 존재하지 않으면 false를 반환합니다.")
-    @ApiImplicitParam(name="nickname", dataType = "string", value="사용자 닉네임")
+    @ApiImplicitParam(name = "nickname", dataType = "string", value = "사용자 닉네임")
     @GetMapping("/nicknameCheck/{nickname}")
     public ResponseEntity<Boolean> checkNickname(@PathVariable String nickname) {
         return ResponseEntity.ok(userService.isDuplicateNickname(nickname));
@@ -56,11 +56,12 @@ public class UserController {
      * [GET] /users
      */
     @ApiOperation(value = "현재 사용자 조회", notes = "발급받은 토큰을 통해 현재 사용자의 정보를 조회합니다. " +
-            "헤더에 사용자 토큰 주입을 필요로 합니다.")
+            "헤더에 사용자 토큰 주입을 필요로 합니다.",
+            response = UserResultData.class)
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-        public UserResultData detail(Authentication authentication) {
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+    public UserResultData detail(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         User user = userService.getUser(userDetails.getUsername());
         return user.toUserResultData();
@@ -73,12 +74,13 @@ public class UserController {
     @PatchMapping("/{id}")
     @ApiOperation(value = "사용자 업데이트",
             notes = "전달받은 사용자의 식별자로 수정할 사용자를 찾아, 주어진 데이터로 사용자의 정보를 갱신합니다." +
-                    "헤더에 사용자 토큰 주입을 필요로 합니다.")
+                    "헤더에 사용자 토큰 주입을 필요로 합니다.",
+            response = UserResultData.class)
     @ResponseStatus(HttpStatus.OK)
-    @ApiImplicitParam(name="id", dataType = "integer", value="사용자 식별자")
+    @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
     public UserResultData update(@PathVariable("id") Long id, @RequestBody @Valid UserModificationData modificationData,
                                  Authentication authentication) throws AccessDeniedException {
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String email = userDetails.getUsername();
 
         User user = userService.updateUser(id, modificationData, email);
@@ -92,13 +94,14 @@ public class UserController {
     @ApiOperation(value = "사용자 삭제",
             notes = "전달받은 사용자의 식별자로 삭제할 사용자를 찾아, 주어진 데이터로 사용자의 정보를 삭제합니다.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiImplicitParam(name="id", dataType = "integer", value="사용자 식별자")
+    @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
     public void destroy(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
     /**
      * 유저 팔로워 조회 API
+     *
      * @param id
      * @param authentication
      * @return
@@ -108,9 +111,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "유저 팔로워 조회",
             notes = "전달받은 사용자의 식별자로 사용자의 팔로워를 조회합니다.")
+    @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
     public List<FollowResultData> getFollower(@PathVariable Long id,
                                               Authentication authentication) {
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUser(userDetails.getUsername());
 
         return followService.getFollower(id, user.getId());
@@ -123,9 +127,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "유저 팔로잉 조회",
             notes = "전달받은 사용자의 식별자로 사용자의 팔로잉을 조회합니다.")
+    @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
     public List<FollowResultData> getFollowing(@PathVariable Long id,
                                                Authentication authentication) {
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUser(userDetails.getUsername());
 
         return followService.getFollowing(id, user.getId());

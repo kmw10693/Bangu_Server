@@ -1,6 +1,7 @@
 package com.ott.ott_server.dto.user;
 
 import com.github.dozermapper.core.Mapping;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 @Setter
+@ApiModel(value = "유저 수정 요청 정보")
 public class UserModificationData {
 
     @Size(min=3, max=20)

@@ -9,6 +9,7 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +48,9 @@ public class ReviewController {
     @GetMapping("/{id}")
     @ApiOperation(value = "리뷰 상세 조회",
             notes = "식별자 값의 리뷰를 상세 조회합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
+    @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
     @ResponseStatus(HttpStatus.OK)
-    public ReviewResponseData detail(@PathVariable("id") @ApiParam(value = "리뷰 식별자 값") Long id) {
+    public ReviewResponseData detail(@PathVariable("id") Long id) {
         Review review = reviewService.getReviewById(id);
         return review.toReviewResponseData();
     }
@@ -59,7 +61,8 @@ public class ReviewController {
     @PatchMapping("/{id}")
     @ApiOperation(value = "리뷰 수정",
             notes = "식별자 값의 리뷰를 수정합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
-    public ReviewResponseData update(@PathVariable("id") @ApiParam(value = "리뷰 식별자 값") Long id,
+    @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
+    public ReviewResponseData update(@PathVariable("id") Long id,
                                      @Valid @RequestBody ReviewModificationData reviewModificationData,
                                      Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -71,7 +74,8 @@ public class ReviewController {
     @ApiOperation(value = "리뷰 삭제",
             notes = "식별자 값의 리뷰를 삭제합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     @ResponseStatus(HttpStatus.OK)
-    public void destroy(@PathVariable("id") @ApiParam(value = "리뷰 식별자 값") Long id,
+    @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
+    public void destroy(@PathVariable("id") Long id,
                         Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUser(userDetails.getUsername());

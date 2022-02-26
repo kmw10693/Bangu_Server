@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-@ApiModel
+@ApiModel(value = "영화 소속 ott 반환 정보")
 public class MovieOttResponseData {
 
     @ApiModelProperty(value = "구독 ott 식별자", example = "1")

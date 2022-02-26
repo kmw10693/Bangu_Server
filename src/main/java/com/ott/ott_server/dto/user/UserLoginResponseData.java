@@ -1,5 +1,6 @@
 package com.ott.ott_server.dto.user;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
+@ApiModel(value = "로그인 성공 결과 정보")
 public class UserLoginResponseData {
 
     @ApiModelProperty(value = "사용자 인덱스", example = "1")

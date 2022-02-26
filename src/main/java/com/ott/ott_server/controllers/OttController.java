@@ -15,7 +15,8 @@ public class OttController {
     private final OttService ottService;
 
     @PostMapping
-    @ApiOperation(value = "OTT 저장", notes = "OTT 정보를 받아 OTT 작성하기")
+    @ApiOperation(value = "OTT 저장", notes = "OTT 정보를 받아 OTT 작성합니다",
+            response = Ott.class)
     @ResponseStatus(HttpStatus.CREATED)
     public Ott save(@RequestBody Ott ott) {
         return ottService.save(ott);

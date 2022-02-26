@@ -1,5 +1,6 @@
 package com.ott.ott_server.domain;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,10 +17,12 @@ import java.time.LocalDateTime;
 public class BaseTimeEntity {
     @CreatedDate
     @Column(updatable = false)
+    @ApiModelProperty(value = "생성 시각", example = "")
     private LocalDateTime createAt;
 
     @LastModifiedDate
     @Column(updatable = false)
+    @ApiModelProperty(value = "업데이트 시각", example = "")
     private LocalDateTime updateAt;
 
 }

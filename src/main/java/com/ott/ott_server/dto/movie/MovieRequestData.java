@@ -18,20 +18,20 @@ public class MovieRequestData {
     @ApiModelProperty(value = "제목", example = "비밀의 숲")
     private String title;
 
-    @ApiParam(value = "tving 선택 여부", required = true, example = "true")
+    @ApiModelProperty(value = "tving 소속 여부", example = "true")
     private boolean tving;
 
-    @ApiParam(value = "watcha 선택 여부", required = true, example = "true")
+    @ApiModelProperty(value = "watcha 소속 여부", example = "true")
     private boolean watcha;
 
-    @ApiParam(value = "netflix 선택 여부", required = true, example = "true")
+    @ApiModelProperty(value = "netflix 소속 여부", example = "true")
     private boolean netflix;
 
-    @ApiParam(value = "wavve 선택 여부", required = true, example = "true")
+    @ApiModelProperty(value = "wavve 소속 여부", example = "true")
     private boolean wavve;
 
     @NotBlank
-    @ApiParam(value = "장르", required = true, example = "drama")
+    @ApiModelProperty(value = "영화 장르", example = "drama")
     private String genre;
 
     @ApiModelProperty(value = "영화 이미지", example = "image.com")
