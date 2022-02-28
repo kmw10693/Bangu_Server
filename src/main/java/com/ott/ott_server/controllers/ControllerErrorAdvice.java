@@ -57,4 +57,35 @@ public class ControllerErrorAdvice {
     public ErrorResponse handleFollowAlreadyExist() {
         return new ErrorResponse("이미 팔로우한 계정입니다!");
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(AuthenticationEntrypointException.class)
+    public ErrorResponse handleAuthenticationEntryPoint() {
+        return new ErrorResponse("해당 리소스에 접근할 권한이 없습니다.");
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ErrorResponse handleAccessDeniedPoint() {
+        return new ErrorResponse("Permission not accessible to this resource.");
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RefreshTokenException.class)
+    public ErrorResponse handleRefreshTokenPoint() {
+        return new ErrorResponse("유효하지 않은 리프레시 토큰입니다. 재로그인 해주세요.");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CCommunicationException.class)
+    public ErrorResponse handleCommunication() { return new ErrorResponse("Social 인증 과정에서 에러가 발생했습니다."); }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CSocialAgreementException.class)
+    public ErrorResponse handleSocialAgreement() { return new ErrorResponse("소셜 로그인 시 필수 동의항목 미동의 하였습니다."); }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CUserExistException.class)
+    public ErrorResponse handleUserExist() { return new ErrorResponse("이미 가입된 소셜 계정입니다!"); }
+
 }

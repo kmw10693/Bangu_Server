@@ -1,19 +1,22 @@
 package com.ott.ott_server.application;
 
+import antlr.Token;
 import com.github.dozermapper.core.Mapper;
 import com.ott.ott_server.domain.Ott;
+import com.ott.ott_server.domain.RefreshToken;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.UserOtt;
+import com.ott.ott_server.dto.token.TokenDto;
 import com.ott.ott_server.dto.user.UserLoginResponseData;
 import com.ott.ott_server.dto.user.UserModificationData;
 import com.ott.ott_server.dto.user.UserRegistrationData;
-import com.ott.ott_server.errors.EmailLoginFailedException;
-import com.ott.ott_server.errors.UserEmailDuplicationException;
-import com.ott.ott_server.errors.UserNickNameDuplicationException;
-import com.ott.ott_server.errors.UserNotFoundException;
+import com.ott.ott_server.dto.user.UserSocialRegistrationData;
+import com.ott.ott_server.errors.*;
 import com.ott.ott_server.infra.OttRepository;
+import com.ott.ott_server.infra.RefreshTokenRepository;
 import com.ott.ott_server.infra.UserOttRepository;
 import com.ott.ott_server.infra.UserRepository;
+import com.ott.ott_server.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.Check;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +36,8 @@ public class UserService {
     private final OttRepository ottRepository;
     private final Mapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtProvider jwtProvider;
 
     /**
      * 사용자 정보를 DB에 저장합니다.
@@ -54,6 +59,15 @@ public class UserService {
         return user;
     }
 
+    // 소셜 회원가입 - 패스워드가 필요없으므로 따로 만듬
+    public Long socialSignup(UserSocialRegistrationData userSignupRequestDto) {
+        if (userRepository
+                .findByEmailAndProvider(userSignupRequestDto.getEmail(), userSignupRequestDto.getProvider())
+                .isPresent()
+        ) throw new CUserExistException();
+        return userRepository.save(userSignupRequestDto.toEntity()).getId();
+    }
+
     private void checkSubscribe(UserRegistrationData userRegistrationData, User user) {
         if (userRegistrationData.isNetflix()) {
             Optional<Ott> ott = findIdByOttName("netflix");
@@ -72,6 +86,11 @@ public class UserService {
             setUserOtt(user, ott);
         }
 
+    }
+
+    public User findByEmailAndProvider(String email, String provider) {
+        return userRepository.findByEmailAndProvider(email, provider)
+                .orElseThrow(UserNotFoundException::new);
     }
 
     private void setUserOtt(User user, Optional<Ott> ott) {
@@ -117,11 +136,22 @@ public class UserService {
      * @param password
      * @return
      */
-    public UserLoginResponseData login(String email, String password) {
+    public TokenDto login(String email, String password) {
         User user = userRepository.findByEmail(email).orElseThrow(EmailLoginFailedException::new);
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new EmailLoginFailedException();
-        return user.toUserLoginResponseData();
+
+        // AccessToken, RefreshToken 발급
+        TokenDto tokenDto = jwtProvider.createTokenDto(user.getId(), user.getRoles());
+
+        // RefreshToken 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .key(user.getId())
+                .token(tokenDto.getRefreshToken())
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+        return tokenDto;
     }
 
     /**

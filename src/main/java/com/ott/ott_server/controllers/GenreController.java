@@ -2,9 +2,12 @@ package com.ott.ott_server.controllers;
 
 import com.ott.ott_server.application.GenreService;
 import com.ott.ott_server.domain.Genre;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +17,13 @@ public class GenreController {
 
     private final GenreService genreService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @PostMapping
     @ApiOperation(value = "장르 저장", notes = "장르 정보를 받아 장르를 저장합니다.",
             response = Genre.class)

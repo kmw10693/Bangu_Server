@@ -8,4 +8,8 @@ public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String username) {
         super("유저 아이디를 찾을 수 없습니다! " + username);
     }
+
+    public UserNotFoundException() {
+        super("유저 아이디를 찾을 수 없습니다! ");
+    }
 }

@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+  output:
+    ansi:
+      enabled: always
+  profiles:
+    include: jwt
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  url:
+    base: http://localhost:8080
+logging:
+  level:
+    org.hibernate.type: trace
+
+social:
+  kakao:
+    client-id: ed809cae6b46a0ddeda9be7f2aa25d0a
+    redirect: /oauth/kakao/redirect
+  url:
+    login: https://kauth.kakao.com/oauth/authorize
+    token: https://kauth.kakao.com/oauth/token
+    profile: https://kapi.kakao.com/v2/user/me
+    unlink: https://kapi.kakao.com/v1/user/unlink

@@ -38,6 +38,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
+    @Column(length = 100) // provider 추가 (kakao, naver, google etc.)
+    private String provider;
+
     @OneToMany(mappedBy = "user")
     @Builder.Default
     private List<UserOtt> userOtt = new ArrayList<>();

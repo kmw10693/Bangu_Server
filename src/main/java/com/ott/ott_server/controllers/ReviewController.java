@@ -10,10 +10,12 @@ import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,13 @@ public class ReviewController {
     private final UserService userService;
     private final MovieService movieService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @PostMapping
     @ApiOperation(value = "리뷰 등록",
             notes = "전달된 정보에 따라 리뷰를 등록합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
@@ -44,7 +53,13 @@ public class ReviewController {
         return review.toReviewResponseData();
     }
 
-
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping("/{id}")
     @ApiOperation(value = "리뷰 상세 조회",
             notes = "식별자 값의 리뷰를 상세 조회합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
@@ -58,6 +73,13 @@ public class ReviewController {
     /**
      * 리뷰를 수정합니다.
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @PatchMapping("/{id}")
     @ApiOperation(value = "리뷰 수정",
             notes = "식별자 값의 리뷰를 수정합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
@@ -70,6 +92,13 @@ public class ReviewController {
         return reviewService.update(id, user, reviewModificationData).toReviewResponseData();
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @DeleteMapping("/{id}")
     @ApiOperation(value = "리뷰 삭제",
             notes = "식별자 값의 리뷰를 삭제합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
@@ -82,6 +111,13 @@ public class ReviewController {
         reviewService.deleteReview(id, user);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping("/{ott}/{genre}")
     @ApiOperation(value = "ott별, 장르 별 리뷰 상세 조회",
             notes = "ott와 장르 별 리뷰를 상세 조회합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")

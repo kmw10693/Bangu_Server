@@ -4,11 +4,14 @@ import com.ott.ott_server.application.MovieService;
 import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.dto.movie.MovieRequestData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,6 +25,13 @@ public class MovieController {
 
     private final MovieService movieService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @PostMapping
     @ApiOperation(value = "영화 생성", notes = "주어진 정보를 받아 영화를 생성합니다.",
             response = MovieResponseData.class)
@@ -32,6 +42,13 @@ public class MovieController {
 
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping
     @ApiOperation(value = "영화 리스트 조회", notes = "영화 전체 리스트를 정렬하여 조회합니다.")
     @ResponseStatus(HttpStatus.OK)
@@ -45,6 +62,13 @@ public class MovieController {
      *
      * @return Book
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping("/{id}")
     @ApiOperation(value = "영화 상세 조회", notes = "식별자 값의 영화를 상세 조회합니다.",
             response = MovieResponseData.class)
@@ -61,6 +85,13 @@ public class MovieController {
      *
      * @return Book
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping("/search")
     @ApiOperation(value = "영화 이름으로 검색", notes = "영화 이름에 검색어가 포함된 영화 리스트를 가져옵니다.")
     @ResponseStatus(HttpStatus.OK)

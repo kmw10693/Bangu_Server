@@ -7,10 +7,12 @@ import com.ott.ott_server.dto.follow.FollowResultData;
 import com.ott.ott_server.dto.user.UserModificationData;
 import com.ott.ott_server.dto.user.UserResultData;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +57,13 @@ public class UserController {
      * 사용자 정보 조회 API
      * [GET] /users
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @ApiOperation(value = "현재 사용자 조회", notes = "발급받은 토큰을 통해 현재 사용자의 정보를 조회합니다. " +
             "헤더에 사용자 토큰 주입을 필요로 합니다.",
             response = UserResultData.class)
@@ -71,6 +80,13 @@ public class UserController {
      * 사용자 업데이트 API
      * [PATCH] /users/:id
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @PatchMapping("/{id}")
     @ApiOperation(value = "사용자 업데이트",
             notes = "전달받은 사용자의 식별자로 수정할 사용자를 찾아, 주어진 데이터로 사용자의 정보를 갱신합니다." +
@@ -90,6 +106,13 @@ public class UserController {
     /**
      * 사용자 삭제 API
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @DeleteMapping("/{id}")
     @ApiOperation(value = "사용자 삭제",
             notes = "전달받은 사용자의 식별자로 삭제할 사용자를 찾아, 주어진 데이터로 사용자의 정보를 삭제합니다.")
@@ -107,6 +130,13 @@ public class UserController {
      * @return
      * @throws AccessDeniedException
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping("/{id}/follower")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "유저 팔로워 조회",
@@ -123,6 +153,13 @@ public class UserController {
     /**
      * 유저 팔로잉 조회 API
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @GetMapping("/{id}/following")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "유저 팔로잉 조회",
