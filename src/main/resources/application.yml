@@ -4,6 +4,9 @@ spring:
     username: sa
     password: password
     driverClassName: org.h2.Driver
+  freemarker:
+    template-loader-path: classpath:/templates
+    suffix: .ftl
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
   output:
@@ -19,6 +22,9 @@ spring:
 logging:
   level:
     org.hibernate.type: trace
+
+jwt:
+  secret: bWUtaHllb25pYy1teS1wbGktbWUtaHllb25pYy1teS1wbGktbWUtaHllb25pYy1teS1wbGktbWUtaHllb25pYy1teS1wbGk=
 
 social:
   kakao:

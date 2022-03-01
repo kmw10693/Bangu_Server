@@ -36,7 +36,7 @@ public class OauthController {
     public ModelAndView socialLogin(ModelAndView mav) {
 
         StringBuilder loginUri = new StringBuilder()
-                .append(env.getProperty("social.kakao.url.login"))
+                .append(env.getProperty("social.url.login"))
                 .append("?response_type=code")
                 .append("&client_id=").append(kakaoClientId)
                 .append("&redirect_uri=").append(baseUrl).append(kakaoRedirectUri);

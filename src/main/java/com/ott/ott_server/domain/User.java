@@ -29,7 +29,6 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(nullable = false)
     private String password;
 
     private String nickname;

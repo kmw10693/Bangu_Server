@@ -43,7 +43,7 @@ public class KakaoService {
         params.add("redirect_uri", baseUrl + kakaoRedirectUri);
         params.add("code", code);
 
-        String requestUri = env.getProperty("social.kakao.url.token");
+        String requestUri = env.getProperty("social.url.token");
         if (requestUri == null) throw new CCommunicationException();
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -58,7 +58,7 @@ public class KakaoService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.set("Authorization", "Bearer " + kakaoAccessToken);
 
-        String requestUrl = env.getProperty("social.kakao.url.profile");
+        String requestUrl = env.getProperty("social.url.profile");
         if (requestUrl == null) throw new CCommunicationException();
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, headers);
@@ -76,7 +76,7 @@ public class KakaoService {
 
     //카카오 유저와 연결 끊기기
    public void kakaoUnlink(String accessToken) {
-        String unlinkUrl = env.getProperty("social.kakao.url.unlink");
+        String unlinkUrl = env.getProperty("social.url.unlink");
         if (unlinkUrl == null) throw new CCommunicationException();
 
         HttpHeaders headers = new HttpHeaders();

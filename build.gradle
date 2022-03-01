@@ -55,6 +55,8 @@ dependencies {
 	//  Json Mapping
 	implementation 'com.google.code.gson:gson'
 
+	implementation 'org.springframework.boot:spring-boot-starter-freemarker:2.5.4'
+
 }
 
 tasks.named('test') {

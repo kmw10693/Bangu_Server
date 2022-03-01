@@ -22,7 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtProvider jwtProvider;
-    
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -34,11 +36,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
                 .and()
-                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/session/signup", "/session/login",
+                        "/session/reissue", "/session/social/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/oauth/kakao/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/exception/**").permitAll()
+                .anyRequest().hasRole("USER")
+
+
                 .and()
-                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .exceptionHandling()
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler)
+
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
     }
