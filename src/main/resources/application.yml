@@ -1,24 +1,33 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:mydb
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
+    url: jdbc:mysql://database-1.cuax43rzes2d.ap-northeast-2.rds.amazonaws.com:3306/banguDB
+    username: admin
+    password: alstjs3369
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   freemarker:
     template-loader-path: classpath:/templates
     suffix: .ftl
-  jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-  output:
-    ansi:
-      enabled: always
+
   profiles:
     include: jwt
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
   url:
     base: http://localhost:8080
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+
 logging:
   level:
     org.hibernate.type: trace

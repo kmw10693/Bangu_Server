@@ -49,16 +49,13 @@ public class Review extends BaseTimeEntity{
 
         return ReviewResponseData.builder()
                 .id(id)
-                .userId(user.getId())
-                .nickname(user.getNickname())
-                .imageUrl(user.getImageUrl())
-                .gender(user.getGender())
-                .birth(user.getBirth())
+                .userProfileData(user.toUserProfileData())
+                .followState(false)
+                .loginUser(false)
                 .attention(attention)
                 .movieResponseData(movie.toMovieResponseData())
                 .dialogue(dialogue)
                 .content(content)
-                .userId(user.getId())
                 .score(score)
                 .build();
     }

@@ -70,19 +70,19 @@ public class UserService {
 
     private void checkSubscribe(UserRegistrationData userRegistrationData, User user) {
         if (userRegistrationData.isNetflix()) {
-            Optional<Ott> ott = findIdByOttName("netflix");
+            Ott ott = findIdByOttName("netflix");
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isTving()){
-            Optional<Ott> ott = findIdByOttName("tving");
+            Ott ott = findIdByOttName("tving");
             setUserOtt(user, ott);
         }
         if(userRegistrationData.isWatcha()) {
-            Optional<Ott> ott = findIdByOttName("watcha");
+            Ott ott = findIdByOttName("watcha");
             setUserOtt(user, ott);
         }
         if(userRegistrationData.isWavve()) {
-            Optional<Ott> ott = findIdByOttName("wavve");
+            Ott ott = findIdByOttName("wavve");
             setUserOtt(user, ott);
         }
 
@@ -93,15 +93,16 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    private void setUserOtt(User user, Optional<Ott> ott) {
+    private void setUserOtt(User user, Ott ott) {
         userOttRepository.save(UserOtt.builder()
                         .user(user)
-                        .ott(ott.get())
+                        .ott(ott)
                 .build());
     }
 
-    private Optional<Ott> findIdByOttName(String title) {
-        return ottRepository.findByNameContaining(title);
+    private Ott findIdByOttName(String title) {
+        return ottRepository.findByNameContaining(title)
+                .orElseThrow(OttNameNotFoundException::new);
     }
 
     /**

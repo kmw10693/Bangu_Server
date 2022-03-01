@@ -35,8 +35,8 @@ public class SessionController {
 
     @ApiOperation(value = "로그인", notes = "로그인 요청 data를 받아 로그인을 합니다.")
     @GetMapping("/login")
-    public TokenDto login( @ApiParam(value = "로그인 요청 Data", required = true)
-            @RequestBody UserLoginRequestData userLoginRequestData) {
+    public TokenDto login(@ApiParam(value = "로그인 요청 Data", required = true)
+                          @RequestBody UserLoginRequestData userLoginRequestData) {
         String email = userLoginRequestData.getEmail();
         String password = userLoginRequestData.getPassword();
         TokenDto tokenDto = userService.login(email, password);

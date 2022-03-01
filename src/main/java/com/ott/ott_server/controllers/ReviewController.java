@@ -1,5 +1,6 @@
 package com.ott.ott_server.controllers;
 
+import com.ott.ott_server.application.FollowService;
 import com.ott.ott_server.application.MovieService;
 import com.ott.ott_server.application.ReviewService;
 import com.ott.ott_server.application.UserService;
@@ -32,7 +33,15 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final UserService userService;
     private final MovieService movieService;
+    private final FollowService followService;
 
+    /**
+     * 리뷰 등록
+     *
+     * @param reviewRequestData
+     * @param authentication
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -53,6 +62,12 @@ public class ReviewController {
         return review.toReviewResponseData();
     }
 
+    /**
+     * 리뷰 상세 조회
+     *
+     * @param id
+     * @return
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -92,6 +107,12 @@ public class ReviewController {
         return reviewService.update(id, user, reviewModificationData).toReviewResponseData();
     }
 
+    /**
+     * 리뷰 삭제
+     *
+     * @param id
+     * @param authentication
+     */
     @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -111,23 +132,45 @@ public class ReviewController {
         reviewService.deleteReview(id, user);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
+    /**
+     * ott, 장르 별 리뷰 조회 & 제목
+     *
+     * @param ott
+     * @param genre
+     * @return
+     */
     @GetMapping("/{ott}/{genre}")
-    @ApiOperation(value = "ott별, 장르 별 리뷰 상세 조회",
-            notes = "ott와 장르 별 리뷰를 상세 조회합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
+    @ApiOperation(value = "ott, 장르, 제목으로 리뷰 조회",
+            notes = "ott와 장르, 제목으로 리뷰를 검색 합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     @ResponseStatus(HttpStatus.OK)
     public List<ReviewResponseData> list(@PathVariable("ott")
-                                   @ApiParam(value = "ott 이름 ex) netflix") String ott,
-                                   @PathVariable("genre")
-                                   @ApiParam(value = "genre 이름 ex) drama") String genre) {
+                                         @ApiParam(value = "ott 이름 ex) netflix") String ott,
+                                         @PathVariable("genre")
+                                         @ApiParam(value = "genre 이름 ex) drama") String genre,
+                                         @RequestParam @ApiParam(value = "영화 제목") String title,
+                                         Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userService.getUser(userDetails.getUsername());
+        return reviewService.getReviews(user, ott, genre, title);
+    }
 
-        return reviewService.getReviews(ott, genre);
+    /**
+     * 제목으로 리뷰 검색 API
+     */
+    @GetMapping
+    @ApiOperation(value = "영화 이름으로 리뷰 검색", notes = "영화 이름에 해당하는 리뷰를 검색합니다.")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ReviewResponseData> findListByTitle(@RequestParam @ApiParam(value = "영화 제목") String title) {
+        return reviewService.findListByTitle(title);
+    }
+
+    /**
+     * 리뷰 전체 가져오기
+     */
+    @GetMapping("/lists")
+    @ApiOperation(value = "리뷰를 전체 조회", notes = "리뷰를 전체 조회합니다.")
+    public List<ReviewResponseData> findAll() {
+        return reviewService.findAll();
     }
 
 }

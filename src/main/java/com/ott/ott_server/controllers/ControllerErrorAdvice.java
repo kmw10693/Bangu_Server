@@ -78,14 +78,26 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CCommunicationException.class)
-    public ErrorResponse handleCommunication() { return new ErrorResponse("Social 인증 과정에서 에러가 발생했습니다."); }
+    public ErrorResponse handleCommunication() {
+        return new ErrorResponse("Social 인증 과정에서 에러가 발생했습니다.");
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CSocialAgreementException.class)
-    public ErrorResponse handleSocialAgreement() { return new ErrorResponse("소셜 로그인 시 필수 동의항목 미동의 하였습니다."); }
+    public ErrorResponse handleSocialAgreement() {
+        return new ErrorResponse("소셜 로그인 시 필수 동의항목 미동의 하였습니다.");
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CUserExistException.class)
-    public ErrorResponse handleUserExist() { return new ErrorResponse("이미 가입된 소셜 계정입니다!"); }
+    public ErrorResponse handleUserExist() {
+        return new ErrorResponse("이미 가입된 소셜 계정입니다!");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(OttNameNotFoundException.class)
+    public ErrorResponse handleOttNameNotFound() {
+        return new ErrorResponse("해당하는 ott가 없습니다!");
+    }
 
 }

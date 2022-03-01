@@ -3,6 +3,7 @@ package com.ott.ott_server.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ott.ott_server.domain.enums.Gender;
 import com.ott.ott_server.dto.user.UserLoginResponseData;
+import com.ott.ott_server.dto.user.UserProfileData;
 import com.ott.ott_server.dto.user.UserResultData;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -122,6 +123,16 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .roles(roles)
                 .createAt(getCreateAt())
                 .updateAt(getUpdateAt())
+                .build();
+    }
+
+    public UserProfileData toUserProfileData() {
+        return UserProfileData.builder()
+                .id(id)
+                .birth(birth)
+                .gender(gender)
+                .imageUrl(imageUrl)
+                .nickname(nickname)
                 .build();
     }
 

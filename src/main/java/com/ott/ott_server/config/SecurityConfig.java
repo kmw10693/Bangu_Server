@@ -46,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/session/reissue", "/session/social/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/oauth/kakao/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/exception/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/session/**").permitAll()
                 .anyRequest().hasRole("USER")
 
 
@@ -60,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**",
+        web.ignoring().antMatchers("/v3/api-docs", "/swagger-resources/**",
                 "/swagger-ui/**", "/webjars/**", "/h2/**");
     }
 }

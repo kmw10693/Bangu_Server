@@ -23,10 +23,10 @@ public class FollowService {
     private final UserRepository userRepository;
 
     private void checkFollow(Long fromUserId, Long toUserId) {
-        if (followRepository.existsByFromUserIdAndToUserId(fromUserId, toUserId)) {
+        if (followRepository.existsByFromUserIdAndToUserId(fromUserId, toUserId))
             throw new FollowAlreadyExistException();
-        }
     }
+
 
     public void follow(User fromUser, User toUser) {
         checkFollow(fromUser.getId(), toUser.getId());
