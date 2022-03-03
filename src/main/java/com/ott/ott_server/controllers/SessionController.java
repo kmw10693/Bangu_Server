@@ -46,12 +46,12 @@ public class SessionController {
 
     @ApiOperation(value = "회원가입", notes = "회원가입 요청 data를 받아 회원가입을 합니다.")
     @PostMapping("/signup")
-    public UserResultData signup(
+    public UserSignupResponseData signup(
             @ApiParam(value = "회원 가입 요청 Data", required = true)
             @RequestBody @Valid UserRegistrationData userRegistrationData) {
         userRegistrationData.setPassword(passwordEncoder.encode(userRegistrationData.getPassword()));
         User user = userService.signup(userRegistrationData);
-        return user.toUserResultData();
+        return user.toUserSignupResponseData();
     }
 
     @ApiOperation(

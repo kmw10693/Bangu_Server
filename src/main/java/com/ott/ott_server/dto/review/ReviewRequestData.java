@@ -19,21 +19,11 @@ import java.math.BigDecimal;
 @ApiModel(value="리뷰 등록 요청 정보")
 public class ReviewRequestData {
 
-    @ApiModelProperty(value = "별점", required = true, example = "4.5")
+    @ApiModelProperty(value = "영화 식별자", required = true, example = "1")
     @NotNull(message = "영화 식별자를 입력해주세요.")
     private Long movieId;
 
-    @ApiParam(value = "tving 선택 여부", required = true, example = "true")
-    private boolean tving;
-
-    @ApiParam(value = "watcha 선택 여부", required = true, example = "true")
-    private boolean watcha;
-
-    @ApiParam(value = "netflix 선택 여부", required = true, example = "true")
-    private boolean netflix;
-
-    @ApiParam(value = "wavve 선택 여부", required = true, example = "true")
-    private boolean wavve;
+    private ReviewOttRequestData reviewOtt;
 
     @ApiModelProperty(value = "별점", required = true, example = "4.5")
     @DecimalMin("0") @DecimalMax("5")
@@ -57,11 +47,6 @@ public class ReviewRequestData {
 
     public ReviewRequestData() {
         revealed = true;
-        tving = false;
-        netflix = false;
-        watcha = false;
-        wavve = false;
     }
-
 
 }

@@ -22,7 +22,7 @@ public class UserProfileData {
     @ApiModelProperty(value = "사용자 성별", example = "M")
     private Gender gender;
 
-    @ApiModelProperty(value = "사용자 생년월일", example = "2001")
-    private String birth;
+    @ApiModelProperty(value = "나이대 ex) 20대 2", example = "2")
+    private Long birth;
 
 }

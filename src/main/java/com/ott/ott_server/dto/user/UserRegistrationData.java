@@ -15,6 +15,7 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Collections;
@@ -47,9 +48,9 @@ public class UserRegistrationData extends BaseTimeEntity {
     @ApiParam(value = "사용자 닉네임", required = true, example = "test")
     private String nickname;
 
-    @NotBlank(message = "생년월일을 입력해주세요.")
+    @NotNull(message = "생년월일을 입력해주세요.")
     @Mapping("birth")
-    private String birth;
+    private Long birth;
 
     // 구독하는 OTT
     @ApiParam(value = "tving 구독 여부", required = true, example = "true")

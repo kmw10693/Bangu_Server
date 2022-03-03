@@ -15,7 +15,7 @@ import java.util.Collections;
 public class UserSocialRegistrationData {
     private String email;
     private String nickname;
-    private String birth;
+    private Long birth;
     private String provider;
 
     public User toEntity() {

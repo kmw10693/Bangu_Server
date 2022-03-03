@@ -5,6 +5,7 @@ import com.ott.ott_server.domain.enums.Gender;
 import com.ott.ott_server.dto.user.UserLoginResponseData;
 import com.ott.ott_server.dto.user.UserProfileData;
 import com.ott.ott_server.dto.user.UserResultData;
+import com.ott.ott_server.dto.user.UserSignupResponseData;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,7 +46,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Builder.Default
     private List<UserOtt> userOtt = new ArrayList<>();
 
-    private String birth;
+    private Long birth;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -108,6 +109,18 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .birth(birth)
                 .gender(gender)
                 .userOttResponseData(userOtt.stream().map(UserOtt::toUserOttResponseData).collect(Collectors.toList()))
+                .create_at(getCreateAt())
+                .update_at(getUpdateAt())
+                .nickname(nickname)
+                .email(email)
+                .build();
+    }
+
+    public UserSignupResponseData toUserSignupResponseData() {
+        return UserSignupResponseData.builder()
+                .id(id)
+                .birth(birth)
+                .gender(gender)
                 .create_at(getCreateAt())
                 .update_at(getUpdateAt())
                 .nickname(nickname)

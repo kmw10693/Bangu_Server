@@ -18,17 +18,7 @@ public class MovieRequestData {
     @ApiModelProperty(value = "제목", example = "비밀의 숲")
     private String title;
 
-    @ApiModelProperty(value = "tving 소속 여부", example = "true")
-    private boolean tving;
-
-    @ApiModelProperty(value = "watcha 소속 여부", example = "true")
-    private boolean watcha;
-
-    @ApiModelProperty(value = "netflix 소속 여부", example = "true")
-    private boolean netflix;
-
-    @ApiModelProperty(value = "wavve 소속 여부", example = "true")
-    private boolean wavve;
+    private MovieOttRequestData movieOttRequestData;
 
     @NotBlank
     @ApiModelProperty(value = "영화 장르", example = "drama")
@@ -47,12 +37,5 @@ public class MovieRequestData {
     @NotBlank
     @ApiModelProperty(value = "등장인물", example = "배두나, 조승우")
     private String actor;
-
-    public MovieRequestData() {
-        tving = false;
-        watcha = false;
-        netflix = false;
-        wavve = false;
-    }
 
 }

@@ -3,11 +3,13 @@ package com.ott.ott_server.domain;
 import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
+import com.ott.ott_server.dto.review.ReviewResultData;
 import lombok.*;
 
 import javax.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -31,6 +33,10 @@ public class Review extends BaseTimeEntity{
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
+    @OneToMany(mappedBy = "review")
+    @Builder.Default
+    private List<ReviewOtt> otts = new ArrayList<>();
+
     private String attention;
 
     private String dialogue;
@@ -52,6 +58,19 @@ public class Review extends BaseTimeEntity{
                 .userProfileData(user.toUserProfileData())
                 .followState(false)
                 .loginUser(false)
+                .attention(attention)
+                .movieResponseData(movie.toMovieResponseData())
+                .dialogue(dialogue)
+                .content(content)
+                .score(score)
+                .build();
+    }
+
+    public ReviewResultData toReviewResultData() {
+
+        return ReviewResultData.builder()
+                .id(id)
+                .userProfileData(user.toUserProfileData())
                 .attention(attention)
                 .movieResponseData(movie.toMovieResponseData())
                 .dialogue(dialogue)

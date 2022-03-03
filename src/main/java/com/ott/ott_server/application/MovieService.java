@@ -73,19 +73,19 @@ public class MovieService {
     }
 
     private void checkSubscribe(MovieRequestData movieRequestData, Movie movie) {
-        if (movieRequestData.isNetflix()) {
+        if (movieRequestData.getMovieOttRequestData().isNetflix()) {
             Optional<Ott> ott = findIdByOttName("netflix");
             setMovieOtt(movie, ott);
         }
-        if (movieRequestData.isTving()){
+        if (movieRequestData.getMovieOttRequestData().isTving()){
             Optional<Ott> ott = findIdByOttName("tving");
             setMovieOtt(movie, ott);
         }
-        if(movieRequestData.isWatcha()) {
+        if(movieRequestData.getMovieOttRequestData().isWatcha()) {
             Optional<Ott> ott = findIdByOttName("watcha");
             setMovieOtt(movie, ott);
         }
-        if(movieRequestData.isWavve()) {
+        if(movieRequestData.getMovieOttRequestData().isWavve()) {
             Optional<Ott> ott = findIdByOttName("wavve");
             setMovieOtt(movie, ott);
         }

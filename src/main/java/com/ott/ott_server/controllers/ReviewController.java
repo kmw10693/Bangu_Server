@@ -37,7 +37,6 @@ public class ReviewController {
 
     /**
      * 리뷰 등록
-     *
      * @param reviewRequestData
      * @param authentication
      * @return
@@ -64,7 +63,6 @@ public class ReviewController {
 
     /**
      * 리뷰 상세 조회
-     *
      * @param id
      * @return
      */
@@ -80,7 +78,10 @@ public class ReviewController {
             notes = "식별자 값의 리뷰를 상세 조회합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
     @ResponseStatus(HttpStatus.OK)
-    public ReviewResponseData detail(@PathVariable("id") Long id) {
+    public ReviewResponseData detail(@PathVariable("id") Long id,
+                                     Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userService.getUser(userDetails.getUsername());
         Review review = reviewService.getReviewById(id);
         return review.toReviewResponseData();
     }
@@ -134,24 +135,24 @@ public class ReviewController {
 
     /**
      * ott, 장르 별 리뷰 조회 & 제목
-     *
      * @param ott
      * @param genre
      * @return
      */
     @GetMapping("/{ott}/{genre}")
-    @ApiOperation(value = "ott, 장르, 제목으로 리뷰 조회",
+    @ApiOperation(value = "ott, 장르, 제목, 성별 / 나이대 맞춤으로 리뷰 조회",
             notes = "ott와 장르, 제목으로 리뷰를 검색 합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     @ResponseStatus(HttpStatus.OK)
     public List<ReviewResponseData> list(@PathVariable("ott")
                                          @ApiParam(value = "ott 이름 ex) netflix") String ott,
                                          @PathVariable("genre")
                                          @ApiParam(value = "genre 이름 ex) drama") String genre,
-                                         @RequestParam @ApiParam(value = "영화 제목") String title,
+                                         @RequestParam(value = "title") @ApiParam(value = "영화 제목", example = "비밀의 숲") String title,
+                                         @RequestParam(value = "sort") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sort,
                                          Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.getUser(userDetails.getUsername());
-        return reviewService.getReviews(user, ott, genre, title);
+        return reviewService.getReviews(user, ott, genre, title, sort);
     }
 
     /**
@@ -160,17 +161,24 @@ public class ReviewController {
     @GetMapping
     @ApiOperation(value = "영화 이름으로 리뷰 검색", notes = "영화 이름에 해당하는 리뷰를 검색합니다.")
     @ResponseStatus(HttpStatus.OK)
-    public List<ReviewResponseData> findListByTitle(@RequestParam @ApiParam(value = "영화 제목") String title) {
-        return reviewService.findListByTitle(title);
+    public List<ReviewResponseData> findListByTitle(@RequestParam @ApiParam(value = "영화 제목") String title,
+                                                    @RequestParam(value = "sort") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sort,
+                                                    Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userService.getUser(userDetails.getUsername());
+        return reviewService.findListByTitle(user, title, sort);
     }
 
     /**
-     * 리뷰 전체 가져오기
+     * 유저가 구독한 ott 기준으로, 리뷰 전체 가져오기
      */
     @GetMapping("/lists")
     @ApiOperation(value = "리뷰를 전체 조회", notes = "리뷰를 전체 조회합니다.")
-    public List<ReviewResponseData> findAll() {
-        return reviewService.findAll();
+    public List<ReviewResponseData> findAll(Authentication authentication,
+                                            @RequestParam(value = "sort") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sort) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userService.getUser(userDetails.getUsername());
+        return reviewService.findAll(user, sort);
     }
 
 }
