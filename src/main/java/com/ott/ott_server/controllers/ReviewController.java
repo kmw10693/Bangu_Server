@@ -140,6 +140,12 @@ public class ReviewController {
      * @return
      */
     @GetMapping("/{ott}/{genre}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @ApiOperation(value = "ott, 장르, 제목, 성별 / 나이대 맞춤으로 리뷰 조회",
             notes = "ott와 장르, 제목으로 리뷰를 검색 합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     @ResponseStatus(HttpStatus.OK)
@@ -159,6 +165,12 @@ public class ReviewController {
      * 제목으로 리뷰 검색 API
      */
     @GetMapping
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @ApiOperation(value = "영화 이름으로 리뷰 검색", notes = "영화 이름에 해당하는 리뷰를 검색합니다.")
     @ResponseStatus(HttpStatus.OK)
     public List<ReviewResponseData> findListByTitle(@RequestParam @ApiParam(value = "영화 제목") String title,
@@ -173,6 +185,12 @@ public class ReviewController {
      * 유저가 구독한 ott 기준으로, 리뷰 전체 가져오기
      */
     @GetMapping("/lists")
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "X-AUTH-TOKEN",
+                    value = "로그인 성공 후 AccessToken",
+                    required = true, dataType = "String", paramType = "header")
+    })
     @ApiOperation(value = "리뷰를 전체 조회", notes = "리뷰를 전체 조회합니다.")
     public List<ReviewResponseData> findAll(Authentication authentication,
                                             @RequestParam(value = "sort") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sort) {
