@@ -25,7 +25,7 @@ import java.util.Collections;
 @Builder
 @Setter
 @ApiModel(value = "유저 등록 요청 정보")
-public class UserRegistrationData extends BaseTimeEntity {
+public class UserRegistrationData {
     @NotBlank(message = "아이디를 입력해주세요.")
     @Size(min=3, max=20)
     @Mapping("email")
