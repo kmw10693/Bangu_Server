@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 public class UserLoginRequestData {
 
     @NotBlank
-    @ApiParam(value = "가입된 사용자의 id", required = true, example = "kmw1063")
+    @ApiParam(value = "가입된 사용자의 id", required = true, example = "kmw10693")
     private String email;
 
     @NotBlank
