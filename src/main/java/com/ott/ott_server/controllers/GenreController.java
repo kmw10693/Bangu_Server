@@ -17,13 +17,7 @@ public class GenreController {
 
     private final GenreService genreService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
+    @PreAuthorize("permitAll()")
     @PostMapping
     @ApiOperation(value = "장르 저장", notes = "장르 정보를 받아 장르를 저장합니다.",
             response = Genre.class)
