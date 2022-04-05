@@ -30,6 +30,7 @@ public class ReviewService {
     private final FollowRepository followRepository;
     private final OttRepository ottRepository;
     private final ReviewOttRepository reviewOttRepository;
+    private final MovieRepository movieRepository;
     private final Mapper mapper;
 
     /**
@@ -53,6 +54,8 @@ public class ReviewService {
                         .build()
         );
         checkSubscribe(reviewRequestData, review);
+        review.getMovie().upReviewCnt();
+        review.getMovie().setScoreAvg(movieRepository.calcScoreAvg(review.getMovie()));
         return review;
     }
 
