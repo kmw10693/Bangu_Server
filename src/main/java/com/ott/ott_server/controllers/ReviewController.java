@@ -33,7 +33,6 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final UserService userService;
     private final MovieService movieService;
-    private final FollowService followService;
 
     /**
      * 리뷰 등록
@@ -66,22 +65,12 @@ public class ReviewController {
      * @param id
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
-    @ApiOperation(value = "리뷰 상세 조회",
-            notes = "식별자 값의 리뷰를 상세 조회합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
+    @ApiOperation(value = "리뷰 상세 조회", notes = "식별자 값의 리뷰를 상세 조회합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
     @ResponseStatus(HttpStatus.OK)
-    public ReviewResponseData detail(@PathVariable("id") Long id,
-                                     Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
+    public ReviewResponseData detail(@PathVariable("id") Long id) {
         Review review = reviewService.getReviewById(id);
         return review.toReviewResponseData();
     }
@@ -139,6 +128,7 @@ public class ReviewController {
      * @param genre
      * @return
      */
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{ott}/{genre}")
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -165,6 +155,7 @@ public class ReviewController {
      * 제목으로 리뷰 검색 API
      */
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -185,6 +176,7 @@ public class ReviewController {
      * 유저가 구독한 ott 기준으로, 리뷰 전체 가져오기
      */
     @GetMapping("/lists")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
