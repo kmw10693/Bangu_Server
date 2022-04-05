@@ -42,14 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/session/signup", "/session/login",
-                        "/session/reissue", "/session/social/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/session/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/oauth/kakao/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/exception/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/session/**").permitAll()
-                .anyRequest().hasRole("USER")
-
-
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
