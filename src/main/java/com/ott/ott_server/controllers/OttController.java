@@ -17,13 +17,7 @@ public class OttController {
 
     private final OttService ottService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
+    @PreAuthorize("permitAll()")
     @PostMapping
     @ApiOperation(value = "OTT 저장", notes = "OTT 정보를 받아 OTT 작성합니다",
             response = Ott.class)
