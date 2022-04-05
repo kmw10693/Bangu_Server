@@ -4,17 +4,19 @@ import com.ott.ott_server.domain.Genre;
 import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.domain.MovieOtt;
 import com.ott.ott_server.domain.Ott;
+import com.ott.ott_server.dto.movie.MovieListRes;
 import com.ott.ott_server.dto.movie.MovieRequestData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.errors.MovieNotFoundException;
-import com.ott.ott_server.infra.GenreRepository;
-import com.ott.ott_server.infra.MovieOttRepository;
-import com.ott.ott_server.infra.MovieRepository;
-import com.ott.ott_server.infra.OttRepository;
+import com.ott.ott_server.infra.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,15 +79,15 @@ public class MovieService {
             Optional<Ott> ott = findIdByOttName("netflix");
             setMovieOtt(movie, ott);
         }
-        if (movieRequestData.getMovieOttRequestData().isTving()){
+        if (movieRequestData.getMovieOttRequestData().isTving()) {
             Optional<Ott> ott = findIdByOttName("tving");
             setMovieOtt(movie, ott);
         }
-        if(movieRequestData.getMovieOttRequestData().isWatcha()) {
+        if (movieRequestData.getMovieOttRequestData().isWatcha()) {
             Optional<Ott> ott = findIdByOttName("watcha");
             setMovieOtt(movie, ott);
         }
-        if(movieRequestData.getMovieOttRequestData().isWavve()) {
+        if (movieRequestData.getMovieOttRequestData().isWavve()) {
             Optional<Ott> ott = findIdByOttName("wavve");
             setMovieOtt(movie, ott);
         }
@@ -102,6 +104,24 @@ public class MovieService {
                 .ott(ott.get())
                 .build()
         );
+    }
+
+    public Page<MovieListRes> getMovieLists(Pageable pageable) {
+        Page<Movie> movies = movieRepository.findAllByDeletedFalse(pageable);
+
+        for (Movie movie : movies) {
+            BigDecimal score = movieRepository.calcScoreAvg(movie);
+            if (score == null) {
+                movie.setScoreAvg(BigDecimal.valueOf(0));
+            } else {
+                movie.setScoreAvg(score);
+            }
+        }
+        List<MovieListRes> movieListRes = movies
+                .stream()
+                .map(Movie::toMovieListRes)
+                .collect(Collectors.toList());
+        return new PageImpl<>(movieListRes, pageable, movies.getTotalElements());
     }
 
 }
