@@ -33,6 +33,7 @@ public class UserController {
      * 아이디 중복 확인 API
      * [GET] /users/emailCheck/:userEmail
      */
+    @PreAuthorize("permitAll()")
     @ApiOperation(value = "아이디 중복확인",
             notes = "DB에 입력된 아이디의 존재 여부를 리턴합니다. 존재하면 true, 존재하지 않으면 false를 반환합니다.")
     @ApiImplicitParam(name = "userEmail", dataType = "string", value = "사용자 아이디")
@@ -45,6 +46,7 @@ public class UserController {
      * 닉네임 중복 확인 API
      * [GET] /users/nicknameCheck/:nickname
      */
+    @PreAuthorize("permitAll()")
     @ApiOperation(value = "닉네임 중복확인",
             notes = "DB에 입력된 닉네임의 존재 여부를 리턴합니다. 존재하면 true, 존재하지 않으면 false를 반환합니다.")
     @ApiImplicitParam(name = "nickname", dataType = "string", value = "사용자 닉네임")
