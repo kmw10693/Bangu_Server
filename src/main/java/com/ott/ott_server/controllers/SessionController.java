@@ -35,7 +35,7 @@ public class SessionController {
     private final JwtProvider jwtProvider;
 
     @ApiOperation(value = "로그인", notes = "로그인 요청 data를 받아 로그인을 합니다.")
-    @GetMapping("/login")
+    @PostMapping("/login")
     public TokenDto login(@ApiParam(value = "로그인 요청 Data", required = true)
                           @RequestBody UserLoginRequestData userLoginRequestData) {
         String email = userLoginRequestData.getEmail();
