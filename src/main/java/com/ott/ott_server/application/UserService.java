@@ -1,13 +1,11 @@
 package com.ott.ott_server.application;
 
-import antlr.Token;
 import com.github.dozermapper.core.Mapper;
 import com.ott.ott_server.domain.Ott;
 import com.ott.ott_server.domain.RefreshToken;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.UserOtt;
 import com.ott.ott_server.dto.token.TokenDto;
-import com.ott.ott_server.dto.user.UserLoginResponseData;
 import com.ott.ott_server.dto.user.UserModificationData;
 import com.ott.ott_server.dto.user.UserRegistrationData;
 import com.ott.ott_server.dto.user.UserSocialRegistrationData;
@@ -18,13 +16,11 @@ import com.ott.ott_server.infra.UserOttRepository;
 import com.ott.ott_server.infra.UserRepository;
 import com.ott.ott_server.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Check;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.nio.file.AccessDeniedException;
-import java.util.Optional;
 
 @Service
 @Transactional
