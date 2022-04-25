@@ -4,10 +4,7 @@ import com.ott.ott_server.application.FollowService;
 import com.ott.ott_server.application.UserService;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.infra.FollowRepository;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = "팔로우 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/follow")

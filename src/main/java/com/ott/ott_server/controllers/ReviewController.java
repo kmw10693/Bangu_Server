@@ -10,10 +10,7 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +22,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 
+@Api(tags = "리뷰 API")
 @RestController
 @RequestMapping("/reviews")
 @RequiredArgsConstructor

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
-@Api(tags = "OAuth 2.0 Kakao")
+@Api(tags = "카카오 로그인 API")
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/oauth/kakao")

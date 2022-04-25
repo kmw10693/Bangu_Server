@@ -2,6 +2,7 @@ package com.ott.ott_server.controllers;
 
 import com.ott.ott_server.application.OttService;
 import com.ott.ott_server.domain.Ott;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = "OTT 저장 API")
 @RestController
 @RequestMapping("/otts")
 @RequiredArgsConstructor

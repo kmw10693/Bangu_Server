@@ -6,6 +6,7 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.follow.FollowResultData;
 import com.ott.ott_server.dto.user.UserModificationData;
 import com.ott.ott_server.dto.user.UserResultData;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +22,7 @@ import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
+@Api(tags = "유저 API")
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor

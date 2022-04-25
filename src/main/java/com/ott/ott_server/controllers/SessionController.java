@@ -13,6 +13,7 @@ import com.ott.ott_server.dto.user.*;
 import com.ott.ott_server.errors.CSocialAgreementException;
 import com.ott.ott_server.errors.UserNotFoundException;
 import com.ott.ott_server.provider.JwtProvider;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Api(tags = "회원가입 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/session")

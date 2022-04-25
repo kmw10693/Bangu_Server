@@ -6,10 +6,7 @@ import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.dto.movie.MovieListRes;
 import com.ott.ott_server.dto.movie.MovieRequestData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -23,6 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 
+@Api(tags = "영화 API")
 @RestController
 @RequestMapping("/movies")
 @RequiredArgsConstructor
