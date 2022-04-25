@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Api(tags = "카카오 로그인 API")
 @Controller
@@ -33,6 +34,7 @@ public class OauthController {
     private String kakaoRedirectUri;
 
     @GetMapping("/login")
+    @ApiIgnore
     public ModelAndView socialLogin(ModelAndView mav) {
 
         StringBuilder loginUri = new StringBuilder()
@@ -46,6 +48,7 @@ public class OauthController {
     }
 
     @GetMapping(value = "/redirect")
+    @ApiIgnore
     public ModelAndView redirectKakao(
             ModelAndView mav,
             @ApiParam(value = "Authorization Code", required = true)
