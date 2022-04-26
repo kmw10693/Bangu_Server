@@ -11,7 +11,6 @@ import springfox.documentation.annotations.ApiIgnore;
 public class HelloController {
 
     @GetMapping
-    @PreAuthorize("permitAll()")
     @ApiIgnore
     public String sayHello() { return "Hello world!"; }
 }

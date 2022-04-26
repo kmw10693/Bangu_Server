@@ -1,6 +1,5 @@
 package com.ott.ott_server.controllers;
 
-import com.ott.ott_server.application.FollowService;
 import com.ott.ott_server.application.MovieService;
 import com.ott.ott_server.application.ReviewService;
 import com.ott.ott_server.application.UserService;
@@ -10,12 +9,12 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
+import com.ott.ott_server.utils.UserUtil;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,16 +28,14 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final UserService userService;
     private final MovieService movieService;
+    private final UserUtil userUtil;
 
     /**
      * 리뷰 등록
-     * @param reviewRequestData
-     * @param authentication
+     *
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -48,11 +45,8 @@ public class ReviewController {
     @PostMapping
     @ApiOperation(value = "리뷰 등록",
             notes = "전달된 정보에 따라 리뷰를 등록합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ReviewResponseData create(@Valid @RequestBody ReviewRequestData reviewRequestData,
-                                     Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
+    public ReviewResponseData create(@Valid @RequestBody ReviewRequestData reviewRequestData) {
+        User user = userUtil.findCurrentUser();
         Movie movie = movieService.getMovieDetailById(reviewRequestData.getMovieId());
         Review review = reviewService.createReview(movie, user, reviewRequestData);
         return review.toReviewResponseData();
@@ -60,10 +54,10 @@ public class ReviewController {
 
     /**
      * 리뷰 상세 조회
+     *
      * @param id
      * @return
      */
-    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     @ApiOperation(value = "리뷰 상세 조회", notes = "식별자 값의 리뷰를 상세 조회합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
@@ -76,7 +70,6 @@ public class ReviewController {
     /**
      * 리뷰를 수정합니다.
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -88,10 +81,8 @@ public class ReviewController {
             notes = "식별자 값의 리뷰를 수정합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
     public ReviewResponseData update(@PathVariable("id") Long id,
-                                     @Valid @RequestBody ReviewModificationData reviewModificationData,
-                                     Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
+                                     @Valid @RequestBody ReviewModificationData reviewModificationData) {
+        User user = userUtil.findCurrentUser();
         return reviewService.update(id, user, reviewModificationData).toReviewResponseData();
     }
 
@@ -99,9 +90,7 @@ public class ReviewController {
      * 리뷰 삭제
      *
      * @param id
-     * @param authentication
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -111,22 +100,19 @@ public class ReviewController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "리뷰 삭제",
             notes = "식별자 값의 리뷰를 삭제합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
-    @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
-    public void destroy(@PathVariable("id") Long id,
-                        Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
+    public void destroy(@PathVariable("id") Long id) {
+        User user = userUtil.findCurrentUser();
         reviewService.deleteReview(id, user);
     }
 
     /**
      * ott, 장르 별 리뷰 조회 & 제목
+     *
      * @param ott
      * @param genre
      * @return
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{ott}/{genre}")
     @ApiImplicitParams({
             @ApiImplicitParam(
@@ -134,26 +120,22 @@ public class ReviewController {
                     value = "로그인 성공 후 AccessToken",
                     required = true, dataType = "String", paramType = "header")
     })
-    @ApiOperation(value = "ott, 장르, 제목, 성별 / 나이대 맞춤으로 리뷰 조회",
+    @ApiOperation(value = "ott, 장르, 제목, 성별 / 나이대 맞춤(기본 false)으로 리뷰 조회",
             notes = "ott와 장르, 제목으로 리뷰를 검색 합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ReviewResponseData> list(@PathVariable("ott")
+    public Page<ReviewResponseData> list(@PathVariable("ott")
                                          @ApiParam(value = "ott 이름 ex) netflix") String ott,
                                          @PathVariable("genre")
                                          @ApiParam(value = "genre 이름 ex) drama") String genre,
                                          @RequestParam(value = "title") @ApiParam(value = "영화 제목", example = "비밀의 숲") String title,
-                                         @RequestParam(value = "sort") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sort,
-                                         Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
-        return reviewService.getReviews(user, ott, genre, title, sort);
+                                         @RequestParam(value = "sortType") @ApiParam(value = "성별/나이대 정렬 여부", example = "false") boolean sortType, Pageable pageable) {
+        User user = userUtil.findCurrentUser();
+        return reviewService.getReviews(user, ott, genre, title, sortType, pageable);
     }
 
     /**
      * 제목으로 리뷰 검색 API
      */
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -161,32 +143,26 @@ public class ReviewController {
                     required = true, dataType = "String", paramType = "header")
     })
     @ApiOperation(value = "영화 이름으로 리뷰 검색", notes = "영화 이름에 해당하는 리뷰를 검색합니다.")
-    @ResponseStatus(HttpStatus.OK)
     public List<ReviewResponseData> findListByTitle(@RequestParam @ApiParam(value = "영화 제목") String title,
-                                                    @RequestParam(value = "sort") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sort,
-                                                    Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
-        return reviewService.findListByTitle(user, title, sort);
+                                                    @RequestParam(value = "sortType") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sortType) {
+        User user = userUtil.findCurrentUser();
+        return reviewService.findListByTitle(user, title, sortType);
     }
 
     /**
      * 유저가 구독한 ott 기준으로, 리뷰 전체 가져오기
      */
     @GetMapping("/lists")
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
                     value = "로그인 성공 후 AccessToken",
                     required = true, dataType = "String", paramType = "header")
     })
-    @ApiOperation(value = "리뷰를 전체 조회", notes = "리뷰를 전체 조회합니다.")
-    public List<ReviewResponseData> findAll(Authentication authentication,
-                                            @RequestParam(value = "sort") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") Boolean sort) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
-        return reviewService.findAll(user, sort);
+    @ApiOperation(value = "리뷰 전체 조회", notes = "리뷰를 유저가 구독한 ott 기준으로, 성별/나이대 정렬 여부에 따라 전체 조회합니다.")
+    public Page<ReviewResponseData> findAll(@RequestParam(value = "sortType") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") boolean sortType, Pageable pageable) {
+        User user = userUtil.findCurrentUser();
+        return reviewService.findAll(user, sortType, pageable);
     }
 
 }

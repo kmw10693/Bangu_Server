@@ -43,7 +43,7 @@ public class UserService {
      */
     public User signup(UserRegistrationData userRegistrationData) {
         String email = userRegistrationData.getEmail();
-        Long age = userRegistrationData.getBirth();
+        String age = userRegistrationData.getBirth().substring(0, 4);
         if (userRepository.existsByEmail(email)) {
             throw new UserEmailDuplicationException(email);
         }
@@ -51,8 +51,8 @@ public class UserService {
         if (userRepository.existsByNickname(nickname)) {
             throw new UserNickNameDuplicationException(nickname);
         }
-        userRegistrationData.setBirth((2023 - age) / 10);
         User user = userRepository.save(userRegistrationData.toEntity());
+        user.setBirth((2023 - Long.valueOf(age)) / 10);
         checkSubscribe(userRegistrationData, user);
         return user;
     }

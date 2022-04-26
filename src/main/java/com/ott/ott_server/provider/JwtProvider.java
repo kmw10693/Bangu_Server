@@ -1,5 +1,6 @@
 package com.ott.ott_server.provider;
 
+import com.ott.ott_server.application.CustomUserDetailsService;
 import com.ott.ott_server.dto.token.TokenDto;
 import com.ott.ott_server.errors.AuthenticationEntrypointException;
 import io.jsonwebtoken.*;
@@ -29,7 +30,7 @@ public class JwtProvider {
     private String ROLES = "roles";
     private final Long accessTokenValidMillisecond = 60 * 60 * 1000L; // 1 hour
     private final Long refreshTokenValidMillisecond = 14 * 24 * 60 * 60 * 1000L; // 14 day
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @PostConstruct
     protected void init() {

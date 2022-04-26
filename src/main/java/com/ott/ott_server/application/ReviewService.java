@@ -6,19 +6,20 @@ import com.ott.ott_server.domain.enums.Gender;
 import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
-import com.ott.ott_server.dto.user.UserRegistrationData;
-import com.ott.ott_server.errors.FollowAlreadyExistException;
 import com.ott.ott_server.errors.OttNameNotFoundException;
 import com.ott.ott_server.errors.ReviewNotFoundException;
 import com.ott.ott_server.errors.UserNotMatchException;
 import com.ott.ott_server.infra.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,15 +65,15 @@ public class ReviewService {
             Ott ott = findIdByOttName("netflix");
             setReviewOtt(review, ott);
         }
-        if (reviewRequestData.getReviewOtt().isTving()){
+        if (reviewRequestData.getReviewOtt().isTving()) {
             Ott ott = findIdByOttName("tving");
             setReviewOtt(review, ott);
         }
-        if(reviewRequestData.getReviewOtt().isWatcha()) {
+        if (reviewRequestData.getReviewOtt().isWatcha()) {
             Ott ott = findIdByOttName("watcha");
             setReviewOtt(review, ott);
         }
-        if(reviewRequestData.getReviewOtt().isWavve()) {
+        if (reviewRequestData.getReviewOtt().isWavve()) {
             Ott ott = findIdByOttName("wavve");
             setReviewOtt(review, ott);
         }
@@ -104,21 +105,22 @@ public class ReviewService {
 
     /**
      * ott와 genre 별로 리뷰 가져오기
+     *
      * @param ott
      * @param genre
      * @return
      */
-    public List<ReviewResponseData> getReviews(User user, String ott, String genre, String title, Boolean sort) {
+    public Page<ReviewResponseData> getReviews(User user, String ott, String genre, String title, Boolean sort, Pageable pageable) {
 
         Long birth = user.getBirth();
         Gender gender = user.getGender();
-        List<Review> reviews;
+        Page<Review> reviews;
 
-        if(sort == true) {
-            reviews = reviewRepository.findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(genre, ott, title, birth, gender);
+        if (sort == true) {
+            reviews = reviewRepository.findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(genre, ott, title, birth, gender, pageable);
         } else {
             reviews = reviewRepository
-                    .findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(genre, ott, title);
+                    .findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(genre, ott, title, pageable);
         }
 
         List<ReviewResponseData> reviewResponses = reviews.stream()
@@ -126,7 +128,7 @@ public class ReviewService {
                 .collect(Collectors.toList());
 
         extracted(user, reviewResponses);
-        return reviewResponses;
+        return new PageImpl<>(reviewResponses, pageable, reviews.getTotalElements());
     }
 
 
@@ -176,15 +178,15 @@ public class ReviewService {
      * @param title
      * @return
      */
-    public List<ReviewResponseData> findListByTitle(User user ,String title, Boolean sort) {
+    public List<ReviewResponseData> findListByTitle(User user, String title, Boolean sort) {
 
         Long birth = user.getBirth();
         Gender gender = user.getGender();
         List<Review> reviews;
 
-        if(sort == true) {
+        if (sort == true) {
             reviews = reviewRepository.findByMovieTitleContainingAndUserBirthAndUserGenderAndDeletedFalseOrderByIdDesc(title, birth, gender);
-        }else {
+        } else {
             reviews = reviewRepository.findByMovieTitleContainingAndDeletedFalseOrderByIdDesc(title);
         }
         List<ReviewResponseData> reviewDatas = reviews.stream()
@@ -198,11 +200,11 @@ public class ReviewService {
     /**
      * 리뷰 모두 조회
      */
-    public List<ReviewResponseData> findAll(User user, Boolean sort) {
+    public Page<ReviewResponseData> findAll(User user, Boolean sort, Pageable pageable) {
 
         Long birth = user.getBirth();
         Gender gender = user.getGender();
-        List<Review> reviews;
+        Page<Review> reviews;
 
         List<UserOtt> userOtt = user.getUserOtt();
         List<Ott> otts = new ArrayList<>();
@@ -211,33 +213,42 @@ public class ReviewService {
             otts.add(ott.getOtt());
         }
 
-        if(sort == true) {
-            reviews = reviewRepository.findAllByOttsOttInAndUserBirthAndUserGenderAndDeletedFalseOrderByIdDesc(otts, birth, gender);
-        } else{
-            reviews = reviewRepository.findAllByOttsOttInAndDeletedIsFalseOrderByIdDesc(otts);
+        if (sort == true) {
+            reviews = reviewRepository.findByOttsOttInAndUserBirthAndUserGenderAndDeletedFalseOrderByIdDesc(otts, birth, gender, pageable);
+        } else {
+            reviews = reviewRepository.findByOttsOttInAndDeletedIsFalseOrderByIdDesc(otts, pageable);
         }
 
-        List<ReviewResponseData> reviewResponseData = reviews.stream()
+        List<Review> sortReviews = reviews.stream().filter(distinctByKey(r -> r.getId())).collect(Collectors.toList());
+
+        List <ReviewResponseData> reviewResponseData = sortReviews.stream()
                 .map(Review::toReviewResponseData)
                 .collect(Collectors.toList());
 
         extracted(user, reviewResponseData);
-        return reviewResponseData;
+        return new PageImpl<>(reviewResponseData, pageable, sortReviews.size());
     }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> map = new HashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
 
     /**
      * 팔로잉 확인 여부 및 로그인 유저와 리뷰 유저가 같은지 확인
+     *
      * @param user
      * @param reviewResponses
      */
     private void extracted(User user, List<ReviewResponseData> reviewResponses) {
         for (ReviewResponseData reviewResponse : reviewResponses) {
             // 만약 유저 아이디와 review 사용자의 아이디가 같다면 loginUser : true
-            if(user.getId() == reviewResponse.getUserProfileData().getId()) {
+            if (user.getId() == reviewResponse.getUserProfileData().getId()) {
                 reviewResponse.setLoginUser(true);
             }
             // 만약 유저 아이디가 review의 아이디를 팔로우 상태라면 followState : true
-            if(followRepository.existsByFromUserIdAndToUserId(user.getId(), reviewResponse.getUserProfileData().getId())) {
+            if (followRepository.existsByFromUserIdAndToUserId(user.getId(), reviewResponse.getUserProfileData().getId())) {
                 reviewResponse.setFollowState(true);
             }
 

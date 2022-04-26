@@ -6,6 +6,7 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.follow.FollowResultData;
 import com.ott.ott_server.dto.user.UserModificationData;
 import com.ott.ott_server.dto.user.UserResultData;
+import com.ott.ott_server.utils.UserUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -30,12 +31,12 @@ public class UserController {
 
     private final UserService userService;
     private final FollowService followService;
+    private final UserUtil userUtil;
 
     /**
      * 아이디 중복 확인 API
      * [GET] /users/emailCheck/:userEmail
      */
-    @PreAuthorize("permitAll()")
     @ApiOperation(value = "아이디 중복확인",
             notes = "DB에 입력된 아이디의 존재 여부를 리턴합니다. 존재하면 true, 존재하지 않으면 false를 반환합니다.")
     @ApiImplicitParam(name = "userEmail", dataType = "string", value = "사용자 아이디")
@@ -48,7 +49,6 @@ public class UserController {
      * 닉네임 중복 확인 API
      * [GET] /users/nicknameCheck/:nickname
      */
-    @PreAuthorize("permitAll()")
     @ApiOperation(value = "닉네임 중복확인",
             notes = "DB에 입력된 닉네임의 존재 여부를 리턴합니다. 존재하면 true, 존재하지 않으면 false를 반환합니다.")
     @ApiImplicitParam(name = "nickname", dataType = "string", value = "사용자 닉네임")
@@ -61,7 +61,6 @@ public class UserController {
      * 사용자 정보 조회 API
      * [GET] /users
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -73,10 +72,8 @@ public class UserController {
             response = UserResultData.class)
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public UserResultData detail(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        User user = userService.getUser(userDetails.getUsername());
+    public UserResultData detail() {
+        User user = userUtil.findCurrentUser();
         return user.toUserResultData();
     }
 
@@ -84,7 +81,6 @@ public class UserController {
      * 사용자 업데이트 API
      * [PATCH] /users/:id
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -98,19 +94,16 @@ public class UserController {
             response = UserResultData.class)
     @ResponseStatus(HttpStatus.OK)
     @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
-    public UserResultData update(@PathVariable("id") Long id, @RequestBody @Valid UserModificationData modificationData,
-                                 Authentication authentication) throws AccessDeniedException {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String email = userDetails.getUsername();
+    public UserResultData update(@PathVariable("id") Long id, @RequestBody @Valid UserModificationData modificationData) throws AccessDeniedException {
+        User user = userUtil.findCurrentUser();
 
-        User user = userService.updateUser(id, modificationData, email);
-        return user.toUserResultData();
+        User updatedUser = userService.updateUser(id, modificationData, user.getEmail());
+        return updatedUser.toUserResultData();
     }
 
     /**
      * 사용자 삭제 API
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -120,7 +113,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "사용자 삭제",
             notes = "전달받은 사용자의 식별자로 삭제할 사용자를 찾아, 주어진 데이터로 사용자의 정보를 삭제합니다.")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
     public void destroy(@PathVariable Long id) {
         userService.deleteUser(id);
@@ -130,11 +122,9 @@ public class UserController {
      * 유저 팔로워 조회 API
      *
      * @param id
-     * @param authentication
      * @return
      * @throws AccessDeniedException
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -146,18 +136,14 @@ public class UserController {
     @ApiOperation(value = "유저 팔로워 조회",
             notes = "전달받은 사용자의 식별자로 사용자의 팔로워를 조회합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
-    public List<FollowResultData> getFollower(@PathVariable Long id,
-                                              Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
-
+    public List<FollowResultData> getFollower(@PathVariable Long id) {
+        User user = userUtil.findCurrentUser();
         return followService.getFollower(id, user.getId());
     }
 
     /**
      * 유저 팔로잉 조회 API
      */
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "X-AUTH-TOKEN",
@@ -169,11 +155,8 @@ public class UserController {
     @ApiOperation(value = "유저 팔로잉 조회",
             notes = "전달받은 사용자의 식별자로 사용자의 팔로잉을 조회합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "사용자 식별자")
-    public List<FollowResultData> getFollowing(@PathVariable Long id,
-                                               Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.getUser(userDetails.getUsername());
-
+    public List<FollowResultData> getFollowing(@PathVariable Long id) {
+        User user = userUtil.findCurrentUser();
         return followService.getFollowing(id, user.getId());
     }
 

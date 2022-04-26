@@ -50,7 +50,8 @@ public class UserRegistrationData {
 
     @NotNull(message = "생년월일을 입력해주세요.")
     @Mapping("birth")
-    private Long birth;
+    @ApiParam(value = "사용자 생년월일", required = true, example = "20010320")
+    private String birth;
 
     // 구독하는 OTT
     @ApiParam(value = "tving 구독 여부", required = true, example = "true")
@@ -81,7 +82,6 @@ public class UserRegistrationData {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .birth(birth)
                 .gender(gender)
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();

@@ -76,7 +76,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Override
     public String getUsername() {
-        return this.email;
+        return String.valueOf(id);
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -153,6 +153,10 @@ public class User extends BaseTimeEntity implements UserDetails {
         nickname = source.getNickname();
         imageUrl = source.getImageUrl();
         password = source.getPassword();
+    }
+
+    public void setBirth(Long birth) {
+        this.birth = birth;
     }
 
 }

@@ -29,11 +29,11 @@ public class Review extends BaseTimeEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", orphanRemoval = true)
     @Builder.Default
     private List<ReviewOtt> otts = new ArrayList<>();
 
