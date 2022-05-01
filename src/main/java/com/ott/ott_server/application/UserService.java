@@ -6,7 +6,7 @@ import com.ott.ott_server.domain.RefreshToken;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.UserOtt;
 import com.ott.ott_server.dto.token.TokenDto;
-import com.ott.ott_server.dto.user.UserModificationData;
+import com.ott.ott_server.dto.user.UserPasswordModifyData;
 import com.ott.ott_server.dto.user.UserRegistrationData;
 import com.ott.ott_server.dto.user.UserSocialRegistrationData;
 import com.ott.ott_server.errors.*;
@@ -20,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.nio.file.AccessDeniedException;
 
 @Service
 @Transactional
@@ -71,15 +70,15 @@ public class UserService {
             Ott ott = findIdByOttName("netflix");
             setUserOtt(user, ott);
         }
-        if (userRegistrationData.isTving()){
+        if (userRegistrationData.isTving()) {
             Ott ott = findIdByOttName("tving");
             setUserOtt(user, ott);
         }
-        if(userRegistrationData.isWatcha()) {
+        if (userRegistrationData.isWatcha()) {
             Ott ott = findIdByOttName("watcha");
             setUserOtt(user, ott);
         }
-        if(userRegistrationData.isWavve()) {
+        if (userRegistrationData.isWavve()) {
             Ott ott = findIdByOttName("wavve");
             setUserOtt(user, ott);
         }
@@ -93,8 +92,8 @@ public class UserService {
 
     private void setUserOtt(User user, Ott ott) {
         userOttRepository.save(UserOtt.builder()
-                        .user(user)
-                        .ott(ott)
+                .user(user)
+                .ott(ott)
                 .build());
     }
 
@@ -178,35 +177,41 @@ public class UserService {
     }
 
     /**
-     * 사용자 업데이트
-     *
-     * @param id
-     * @param modificationData
-     * @return
+     * 비밀번호 업데이트
      */
-    public User updateUser(Long id, UserModificationData modificationData, String email) throws AccessDeniedException {
+    public void updatePassword(User user, UserPasswordModifyData userPasswordModifyData) {
 
-        User user = findUserByEmail(email);
-        if (!id.equals(user.getId())) {
-            throw new AccessDeniedException("Access denied");
+        // 비밀번호를 암호화 한다.
+        userPasswordModifyData.setPassword(passwordEncoder.encode(userPasswordModifyData.getPassword()));
+        // 비밀번호를 업데이트 한다.
+        user.updatePassword(userPasswordModifyData.getPassword());
+    }
+
+    /**
+     * 닉네임 업데이트
+     */
+    public void updateNickname(User user, String nickname) {
+        // DB에 닉네임이 중복되어 있다면(참)
+        if (userRepository.existsByNickname(nickname)) {
+            throw new UserNickNameDuplicationException(nickname);
         }
+        // 변경 후 리턴
+        user.updateNickname(nickname);
+    }
 
-        modificationData.setPassword(passwordEncoder.encode(modificationData.getPassword()));
-        User source = mapper.map(modificationData, User.class);
-        user.changeWith(source);
-
-        return user;
+    /**
+     * 이미지 업데이트
+     */
+    public void updateImageUrl(User user, String imageUrl) {
+        user.updateImageUrl(imageUrl);
     }
 
     /**
      * 사용자 삭제
      *
-     * @param id
      * @return
      */
-    public User deleteUser(Long id) {
-        User user = findUser(id);
+    public void deleteUser(User user) {
         user.destroy();
-        return user;
     }
 }

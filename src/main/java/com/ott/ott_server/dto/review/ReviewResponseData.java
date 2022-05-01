@@ -37,8 +37,7 @@ public class ReviewResponseData {
     @ApiModelProperty(value = "리뷰 사용자가 검색 사용자인지 확인 여부", example = "true")
     private boolean loginUser;
 
-    @Builder.Default
-    private List<ReviewOttResponseData> reviewOttResponseData = new ArrayList<>();
+    private List<ReviewOttResponseData> reviewOttResponseData;
 
     @ApiModelProperty(value = "별점", example = "4.5")
     private BigDecimal score;

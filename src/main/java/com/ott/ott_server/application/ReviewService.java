@@ -3,13 +3,18 @@ package com.ott.ott_server.application;
 import com.github.dozermapper.core.Mapper;
 import com.ott.ott_server.domain.*;
 import com.ott.ott_server.domain.enums.Gender;
+import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.dto.review.ReviewModificationData;
+import com.ott.ott_server.dto.review.ReviewOttResponseData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
+import com.ott.ott_server.dto.review.response.ReviewRes;
+import com.ott.ott_server.dto.review.response.ReviewSearchData;
 import com.ott.ott_server.errors.OttNameNotFoundException;
 import com.ott.ott_server.errors.ReviewNotFoundException;
 import com.ott.ott_server.errors.UserNotMatchException;
 import com.ott.ott_server.infra.*;
+import com.ott.ott_server.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,12 +32,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewService {
 
+    private final UserUtil userUtil;
     private final ReviewRepository reviewRepository;
     private final FollowRepository followRepository;
     private final OttRepository ottRepository;
     private final ReviewOttRepository reviewOttRepository;
     private final MovieRepository movieRepository;
-    private final Mapper mapper;
+    private final BookMarkRepository bookMarkRepository;
 
     /**
      * 리뷰 생성
@@ -108,27 +114,58 @@ public class ReviewService {
      *
      * @param ott
      * @param genre
-     * @return
      */
-    public Page<ReviewResponseData> getReviews(User user, String ott, String genre, String title, Boolean sort, Pageable pageable) {
+    public ReviewSearchData getReviews(String ott, String genre, String type, String title, boolean sortType, Pageable pageable) {
 
+        User user = userUtil.findCurrentUser();
         Long birth = user.getBirth();
         Gender gender = user.getGender();
-        Page<Review> reviews;
+        Page<Review> reviews = null;
 
-        if (sort == true) {
-            reviews = reviewRepository.findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(genre, ott, title, birth, gender, pageable);
-        } else {
-            reviews = reviewRepository
-                    .findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(genre, ott, title, pageable);
+        if (type.equals("home")) {
+            if (sortType == false) {
+                reviews = reviewRepository.findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(genre, ott, title, pageable);
+            } else {
+                reviews = reviewRepository.findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(genre, ott, title, birth, gender, pageable);
+            }
+        } else if (type.equals("mypage")) {
+            reviews = reviewRepository.findByUserAndMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(user, genre, ott, title, pageable);
+        } else if (type.equals("feed")) {
+            List<Follow> followList = followRepository.findByFromUser(user);
+            List<User> followings = new ArrayList<>();
+            followList.stream().forEach(r -> followings.add(r.getToUser()));
+            reviews = reviewRepository.findByUserInAndMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(followings, genre, ott, title, pageable);
         }
 
-        List<ReviewResponseData> reviewResponses = reviews.stream()
-                .map(Review::toReviewResponseData)
-                .collect(Collectors.toList());
+        List<ReviewRes> reviewRes = new ArrayList<>();
+        List<Movie> movie = movieRepository.findByGenreNameAndOttsOttNameAndTitleContainingAndDeletedIsFalse(genre, ott, title);
 
-        extracted(user, reviewResponses);
-        return new PageImpl<>(reviewResponses, pageable, reviews.getTotalElements());
+        List<MovieResponseData> movieResponseData = movie.stream()
+                .map(Movie::toMovieResponseData).collect(Collectors.toList());
+
+        for (Review review : reviews) {
+            Boolean followState = followRepository.existsByFromUserIdAndToUserId(user.getId(), review.getUser().getId());
+            Boolean bookmark = bookMarkRepository.existsByReviewAndUser(review, user);
+
+            if (user.getId() == review.getUser().getId()) {
+                followState = null;
+                bookmark = null;
+            }
+            reviewRes.add(ReviewRes.builder()
+                    .id(review.getId())
+                    .userProfileData(review.getUser().toUserProfileData())
+                    .followState(followState)
+                    .bookMark(bookmark)
+                    .content(review.getContent())
+                    .title(review.getMovie().getTitle())
+                    .genre(review.getMovie().getGenre().getName())
+                    .imageUrl(review.getMovie().getImageUrl())
+                    .score(review.getScore())
+                    .reviewOtts(ReviewOttResponseData.of(review.getOtts()))
+                    .build());
+        }
+
+        return new ReviewSearchData(movieResponseData, new PageImpl<>(reviewRes, pageable, reviewRes.size()));
     }
 
 
@@ -193,18 +230,18 @@ public class ReviewService {
                 .map(Review::toReviewResponseData)
                 .collect(Collectors.toList());
 
-        extracted(user, reviewDatas);
+        checkFollowing(user, reviewDatas);
         return reviewDatas;
     }
 
     /**
      * 리뷰 모두 조회
      */
-    public Page<ReviewResponseData> findAll(User user, Boolean sort, Pageable pageable) {
+    public Page<ReviewResponseData> findAll(User user, String type, Pageable pageable) {
 
         Long birth = user.getBirth();
         Gender gender = user.getGender();
-        Page<Review> reviews;
+        Page<Review> reviews = null;
 
         List<UserOtt> userOtt = user.getUserOtt();
         List<Ott> otts = new ArrayList<>();
@@ -213,20 +250,49 @@ public class ReviewService {
             otts.add(ott.getOtt());
         }
 
-        if (sort == true) {
-            reviews = reviewRepository.findByOttsOttInAndUserBirthAndUserGenderAndDeletedFalseOrderByIdDesc(otts, birth, gender, pageable);
-        } else {
+        // 만약 홈인 경우
+        if (type.equals("home")) {
             reviews = reviewRepository.findByOttsOttInAndDeletedIsFalseOrderByIdDesc(otts, pageable);
+        }
+        // 만약 본인인 경우
+        else if (type.equals("myReviews")) {
+            reviews = reviewRepository.findByUserOrderByIdDesc(user, pageable);
+        }
+        // 팔로잉하는 경우
+        else if (type.equals("following")) {
+            // 팔로우 리스트를 가져온다.
+            List<Follow> followList = followRepository.findByFromUser(user);
+            List<User> followings = new ArrayList<>();
+            // 유저 팔로우에 팔로우를 추가한다.
+            followList.stream().forEach(r -> followings.add(r.getToUser()));
+            // 팔로우 리스트의 리뷰들을 리스트로 가져오고 저장한다.
+            reviews = reviewRepository.findByUserInAndDeletedFalseOrderByIdDesc(followings, pageable);
         }
 
         List<Review> sortReviews = reviews.stream().filter(distinctByKey(r -> r.getId())).collect(Collectors.toList());
 
-        List <ReviewResponseData> reviewResponseData = sortReviews.stream()
+        List<ReviewResponseData> reviewResponseData = sortReviews.stream()
                 .map(Review::toReviewResponseData)
                 .collect(Collectors.toList());
 
-        extracted(user, reviewResponseData);
+        checkFollowing(user, reviewResponseData);
         return new PageImpl<>(reviewResponseData, pageable, sortReviews.size());
+    }
+
+    /**
+     * 해당 유저의 리뷰 조회
+     */
+    public Page<ReviewResponseData> findAllByUser(User user, Long userId, Pageable pageable) {
+
+        // 유저 아이디의 해당하는 리뷰를 전체 가져오기
+        Page<Review> reviews = reviewRepository.findByUserIdAndDeletedFalseOrderByIdDesc(userId, pageable);
+
+        List<ReviewResponseData> reviewResponseData = reviews.stream()
+                .map(Review::toReviewResponseData)
+                .collect(Collectors.toList());
+
+        checkFollowing(user, reviewResponseData);
+        return new PageImpl<>(reviewResponseData, pageable, reviews.getTotalElements());
     }
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
@@ -241,7 +307,7 @@ public class ReviewService {
      * @param user
      * @param reviewResponses
      */
-    private void extracted(User user, List<ReviewResponseData> reviewResponses) {
+    private void checkFollowing(User user, List<ReviewResponseData> reviewResponses) {
         for (ReviewResponseData reviewResponse : reviewResponses) {
             // 만약 유저 아이디와 review 사용자의 아이디가 같다면 loginUser : true
             if (user.getId() == reviewResponse.getUserProfileData().getId()) {
@@ -254,4 +320,15 @@ public class ReviewService {
 
         }
     }
+
+    /**
+     * 북마크한 리뷰 가져오기
+     */
+    public Page<ReviewResponseData> getBookmark(Pageable pageable) {
+        User user = userUtil.findCurrentUser();
+        List<BookMark> bookMarks = bookMarkRepository.findByUser(user);
+        List<ReviewResponseData> reviews = bookMarks.stream().map(r -> r.getReview().toReviewResponseData()).collect(Collectors.toList());
+        return new PageImpl<>(reviews, pageable, reviews.size());
+    }
+
 }

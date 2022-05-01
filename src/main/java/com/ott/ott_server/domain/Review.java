@@ -2,6 +2,7 @@ package com.ott.ott_server.domain;
 
 import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.dto.review.ReviewModificationData;
+import com.ott.ott_server.dto.review.ReviewOttResponseData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
 import com.ott.ott_server.dto.review.ReviewResultData;
 import lombok.*;
@@ -60,6 +61,7 @@ public class Review extends BaseTimeEntity{
                 .loginUser(false)
                 .attention(attention)
                 .movieResponseData(movie.toMovieResponseData())
+                .reviewOttResponseData(ReviewOttResponseData.of(otts))
                 .dialogue(dialogue)
                 .content(content)
                 .score(score)

@@ -6,6 +6,7 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.utils.UserUtil;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,15 +21,12 @@ public class FollowController {
     private final UserService userService;
     private final UserUtil userUtil;
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN",
+            value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
     @PostMapping("/{toUser}")
-    @ApiOperation(value = "팔로우 기능", notes = "유저 idx를 받아 해당 유저를 팔로우합니다." +
-            "헤더에 사용자 토큰 주입을 필요로 합니다.")
+    @ApiOperation(value = "팔로우 기능", notes = "유저 idx를 받아 해당 유저를 팔로우합니다.")
     public ResponseEntity<?> followUser(@PathVariable("toUser") @ApiParam(value = "유저 식별자 값") Long toUserId) {
         User user = userUtil.findCurrentUser();
         User toUser = userService.getUser(toUserId);
@@ -36,20 +34,20 @@ public class FollowController {
         return new ResponseEntity<>("팔로우 성공", HttpStatus.OK);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN",
+            value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
     @DeleteMapping("/{toUserId}")
-    @ApiOperation(value = "언팔로우 기능", notes = "유저 idx를 받아 해당 유저를 언팔로우합니다." +
-            "헤더에 사용자 토큰 주입을 필요로 합니다.")
+    @ApiOperation(value = "언팔로우 기능", notes = "유저 idx를 받아 해당 유저를 언팔로우합니다.")
     public ResponseEntity<?> unFollowUser(@PathVariable @ApiParam(value = "유저 식별자 값") Long toUserId) {
         User user = userUtil.findCurrentUser();
         User toUser = userService.getUser(toUserId);
         followService.unFollow(user, toUser);
         return new ResponseEntity<>("팔로우 취소 성공", HttpStatus.OK);
     }
+
+
+
 
 }

@@ -149,10 +149,16 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .build();
     }
 
-    public void changeWith(User source) {
-        nickname = source.getNickname();
-        imageUrl = source.getImageUrl();
-        password = source.getPassword();
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public void setBirth(Long birth) {

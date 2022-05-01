@@ -2,10 +2,7 @@ package com.ott.ott_server.domain;
 
 import com.ott.ott_server.dto.movie.MovieListRes;
 import com.ott.ott_server.dto.movie.MovieResponseData;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.metamodel.model.domain.spi.MapPersistentAttribute;
 
 import javax.persistence.*;
@@ -19,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Builder
 @AllArgsConstructor
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Movie extends BaseTimeEntity{
     @Id
@@ -63,8 +61,6 @@ public class Movie extends BaseTimeEntity{
                 .director(director)
                 .imageUrl(imageUrl)
                 .title(title)
-                .birth(birth)
-                .deleted(deleted)
                 .genre(genre.getName())
                 .movieOtts(otts.stream().map(MovieOtt::toMovieOttResponseData).collect(Collectors.toList()))
                 .build();

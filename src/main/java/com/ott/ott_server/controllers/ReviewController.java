@@ -9,6 +9,7 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
+import com.ott.ott_server.dto.review.response.ReviewSearchData;
 import com.ott.ott_server.utils.UserUtil;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -111,25 +112,21 @@ public class ReviewController {
      *
      * @param ott
      * @param genre
-     * @return
      */
     @GetMapping("/{ott}/{genre}")
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
-    @ApiOperation(value = "ott, 장르, 제목, 성별 / 나이대 맞춤(기본 false)으로 리뷰 조회",
-            notes = "ott와 장르, 제목으로 리뷰를 검색 합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
-    public Page<ReviewResponseData> list(@PathVariable("ott")
-                                         @ApiParam(value = "ott 이름 ex) netflix") String ott,
-                                         @PathVariable("genre")
-                                         @ApiParam(value = "genre 이름 ex) drama") String genre,
-                                         @RequestParam(value = "title") @ApiParam(value = "영화 제목", example = "비밀의 숲") String title,
-                                         @RequestParam(value = "sortType") @ApiParam(value = "성별/나이대 정렬 여부", example = "false") boolean sortType, Pageable pageable) {
-        User user = userUtil.findCurrentUser();
-        return reviewService.getReviews(user, ott, genre, title, sortType, pageable);
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN",
+            value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
+    @ApiOperation(value = "영화 이름으로 리뷰 조회", notes = "ott와 장르, 제목으로 리뷰를 검색 합니다.")
+    public ReviewSearchData list(@PathVariable("ott")
+                                 @ApiParam(value = "ott 이름 ex) netflix") String ott,
+                                 @PathVariable("genre")
+                                 @ApiParam(value = "genre 이름 ex) drama") String genre,
+                                 @RequestParam @ApiParam(value = "검색 범위(홈: home, 내 방구석: mypage, 피드: feed)", example = "home") String type,
+                                 @RequestParam @ApiParam(value = "영화 제목", example = "비밀의 숲") String title,
+                                 @RequestParam @ApiParam(value = "성별/나이대 정렬 여부(홈에서만 가능)", example = "false") boolean sortType, Pageable pageable) {
+        return reviewService.getReviews(ott, genre, type, title, sortType, pageable);
     }
 
     /**
@@ -153,16 +150,37 @@ public class ReviewController {
      * 유저가 구독한 ott 기준으로, 리뷰 전체 가져오기
      */
     @GetMapping("/lists")
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
-    @ApiOperation(value = "리뷰 전체 조회", notes = "리뷰를 유저가 구독한 ott 기준으로, 성별/나이대 정렬 여부에 따라 전체 조회합니다.")
-    public Page<ReviewResponseData> findAll(@RequestParam(value = "sortType") @ApiParam(value = "성별/나이대 정렬 여부", example = "true") boolean sortType, Pageable pageable) {
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN",
+            value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
+    @ApiOperation(value = "리뷰 전체 조회", notes = "리뷰를 인자로 받은 값(홈:home, 내 방구석: myReviews, 피드: following)에 따라 정렬합니다.")
+    public Page<ReviewResponseData> findAll(@RequestParam @ApiParam(value = "표시 기준", example = "home") String type, Pageable pageable) {
         User user = userUtil.findCurrentUser();
-        return reviewService.findAll(user, sortType, pageable);
+        return reviewService.findAll(user, type, pageable);
+    }
+
+    /**
+     * 해당 유저의 리뷰 가져오기
+     */
+    @GetMapping("/lists/{userId}")
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN", value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
+    @ApiOperation(value = "유저의 리뷰 조회", notes = "유저 인덱스를 받아 리뷰를 조회합니다.")
+    public Page<ReviewResponseData> findAll(@PathVariable @ApiParam(value = "유저 인덱스", example = "1") Long userId, Pageable pageable) {
+        User user = userUtil.findCurrentUser();
+        return reviewService.findAllByUser(user, userId, pageable);
+    }
+
+    @GetMapping("/bookmark")
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN", value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
+    @ApiOperation(value = "북마크한 리뷰 조회", notes = "북마크한 리뷰를 가져옵니다.")
+    public Page<ReviewResponseData> getBookmark(Pageable pageable) {
+        User user = userUtil.findCurrentUser();
+        return reviewService.getBookmark(pageable);
     }
 
 }
