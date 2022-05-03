@@ -17,7 +17,7 @@ import static javax.persistence.FetchType.LAZY;
 @Builder
 @AllArgsConstructor
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Movie extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,19 +37,11 @@ public class Movie extends BaseTimeEntity{
 
     private String title;
 
-    @Builder.Default
-    private BigDecimal scoreAvg = new BigDecimal("0");
-
-    @Builder.Default
-    private Integer reviewCnt = 0;
-
     private String imageUrl;
 
     private String director;
 
     private String actor;
-
-    private String birth;
 
     @Builder.Default
     private boolean deleted = false;
@@ -70,16 +62,7 @@ public class Movie extends BaseTimeEntity{
         return MovieListRes.builder()
                 .movieId(id)
                 .imageUrl(imageUrl)
-                .score(scoreAvg)
                 .build();
-    }
-
-    public void setScoreAvg(BigDecimal scoreAvg) {
-        this.scoreAvg = scoreAvg;
-    }
-
-    public void upReviewCnt() {
-        reviewCnt++;
     }
 
 }

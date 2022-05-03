@@ -9,6 +9,7 @@ import com.ott.ott_server.dto.movie.MovieResponseData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
+import org.json.simple.parser.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -51,9 +52,7 @@ public class MovieController {
      * @return Book
      */
     @GetMapping("/{id}")
-    @ApiOperation(value = "영화 상세 조회", notes = "식별자 값의 영화를 상세 조회합니다.",
-            response = MovieResponseData.class)
-    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "영화 상세 조회", notes = "식별자 값의 영화를 상세 조회합니다.")
     public MovieResponseData detail(@PathVariable("id") @ApiParam(value = "영화 식별자 값") Long id) {
         Movie movie = movieService.getMovieDetailById(id);
         return movie.toMovieResponseData();
@@ -63,14 +62,13 @@ public class MovieController {
     /**
      * 해당하는 제목의 영화를 가져옵니다.
      * [GET] /movies/search?name=
-     *
      * @return Book
      */
     @GetMapping("/search")
-    @ApiOperation(value = "영화 이름으로 검색", notes = "영화 이름에 검색어가 포함된 영화 리스트를 가져옵니다.")
-    @ResponseStatus(HttpStatus.OK)
-    public List<MovieResponseData> search(@RequestParam(name = "name") @ApiParam(value = "영화 이름 검색어") String search) {
-        return movieService.getSearchMovies(search);
+    @ApiOperation(value = "영화 이름으로 검색", notes = "영화 이름에 검색어가 포함된 영화 리스트를 가져오고 DB에 저장합니다.")
+    public Page<MovieResponseData> search(@RequestParam @ApiParam(value = "영화 이름") String name, Pageable pageable)
+            throws ParseException {
+        return movieService.getSearchMovies(name, pageable);
     }
 
     /**
@@ -79,7 +77,6 @@ public class MovieController {
      */
     @GetMapping("/lists")
     @ApiOperation(value = "회원가입 성공시 영화 리스트", notes = "영화 리스트의 평점과 표지 이미지를 가져옵니다.")
-    @ResponseStatus(HttpStatus.OK)
     public Page<MovieListRes> getMovies(@PageableDefault(size = 10) Pageable pageable) {
         return movieService.getMovieLists(pageable);
     }

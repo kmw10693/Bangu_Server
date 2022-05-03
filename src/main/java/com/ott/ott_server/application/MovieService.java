@@ -7,29 +7,47 @@ import com.ott.ott_server.domain.Ott;
 import com.ott.ott_server.dto.movie.MovieListRes;
 import com.ott.ott_server.dto.movie.MovieRequestData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.movie.response.Item;
+import com.ott.ott_server.dto.movie.response.NaverResponseData;
+import com.ott.ott_server.errors.GenreNotFoundException;
 import com.ott.ott_server.errors.MovieNotFoundException;
 import com.ott.ott_server.infra.*;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class MovieService {
 
+    private final RestTemplate restTemplate;
     private final MovieRepository movieRepository;
     private final OttRepository ottRepository;
     private final MovieOttRepository movieOttRepository;
     private final GenreRepository genreRepository;
+
+    @Value("${social.naver.client-id}")
+    private String CLIENT_ID;
+    @Value("${social.naver.client-secret}")
+    private String CLIENT_SECRET;
+
 
     public List<MovieResponseData> getMovies() {
         List<Movie> movies = movieRepository.findAll();
@@ -47,26 +65,53 @@ public class MovieService {
         return movie;
     }
 
-    public List<MovieResponseData> getSearchMovies(String search) {
+    public Page<MovieResponseData> getSearchMovies(String search, Pageable pageable) throws ParseException {
 
-        List<Movie> movies = movieRepository.findAllByTitleContaining(search);
-        return movies.stream()
+        String apiURL = "https://openapi.naver.com/v1/search/movie?query={search}";
+        final HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Naver-Client-Id", CLIENT_ID);
+        headers.set("X-Naver-Client-Secret", CLIENT_SECRET);
+
+        final HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        NaverResponseData searchMovies = restTemplate.exchange(apiURL, HttpMethod.GET, entity, NaverResponseData.class, search).getBody();
+
+        List<Movie> movies = new ArrayList<>();
+        for (int i = 0; i < searchMovies.getDisplay(); i++) {
+            Item item = searchMovies.getItems().get(i);
+            Movie movie = movieRepository.findByTitleContainingAndDirector(item.getTitle(), item.getDirector());
+
+            if (movie == null) {
+                Genre genre = genreRepository.findByName("movie").orElseThrow(GenreNotFoundException::new);
+                movie = movieRepository.save(Movie.builder()
+                        .title(item.getTitle())
+                        .imageUrl(item.getImage())
+                        .director(item.getDirector())
+                        .actor(item.getActor())
+                        .genre(genre)
+                        .build());
+            }
+            movies.add(movie);
+        }
+
+        List<MovieResponseData> movieResponseData = movies.stream()
                 .map(Movie::toMovieResponseData)
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(movieResponseData, pageable, movies.size());
     }
 
     public Movie registerMovie(MovieRequestData movieRequestData) {
-        Optional<Genre> genre =
-                genreRepository.findByNameContaining(movieRequestData.getGenre());
+        Genre genre = genreRepository.findByName(movieRequestData.getGenre())
+                .orElseThrow(GenreNotFoundException::new);
 
         Movie movie = movieRepository.save(
                 Movie.builder()
                         .actor(movieRequestData.getActor())
                         .director(movieRequestData.getDirector())
-                        .birth(movieRequestData.getBirth())
                         .imageUrl(movieRequestData.getImageUrl())
                         .title(movieRequestData.getTitle())
-                        .genre(genre.get())
+                        .genre(genre)
                         .build()
         );
         checkSubscribe(movieRequestData, movie);
@@ -109,14 +154,6 @@ public class MovieService {
     public Page<MovieListRes> getMovieLists(Pageable pageable) {
         Page<Movie> movies = movieRepository.findAllByDeletedFalse(pageable);
 
-        for (Movie movie : movies) {
-            BigDecimal score = movieRepository.calcScoreAvg(movie);
-            if (score == null) {
-                movie.setScoreAvg(BigDecimal.valueOf(0));
-            } else {
-                movie.setScoreAvg(score);
-            }
-        }
         List<MovieListRes> movieListRes = movies
                 .stream()
                 .map(Movie::toMovieListRes)

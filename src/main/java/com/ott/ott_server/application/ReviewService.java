@@ -61,8 +61,6 @@ public class ReviewService {
                         .build()
         );
         checkSubscribe(reviewRequestData, review);
-        review.getMovie().upReviewCnt();
-        review.getMovie().setScoreAvg(movieRepository.calcScoreAvg(review.getMovie()));
         return review;
     }
 

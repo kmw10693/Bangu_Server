@@ -36,6 +36,4 @@ public class MovieResponseData {
     @ApiModelProperty(value = "장르", example = "drama")
     private String genre;
 
-
-
 }

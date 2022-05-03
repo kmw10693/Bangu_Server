@@ -12,8 +12,8 @@ import javax.persistence.Id;
 @Builder
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Genre extends BaseTimeEntity{
+@NoArgsConstructor
+public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(value = "장르 식별자 값", example = "1")

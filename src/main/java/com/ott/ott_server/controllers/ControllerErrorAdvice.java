@@ -100,4 +100,10 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("해당하는 ott가 없습니다!");
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(GenreNotFoundException.class)
+    public ErrorResponse handleGenreNotFound() {
+        return new ErrorResponse("해당하는 장르가 없습니다!");
+    }
+
 }

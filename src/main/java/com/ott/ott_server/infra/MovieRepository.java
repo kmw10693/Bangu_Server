@@ -9,15 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    List<Movie> findAllByTitleContaining(String search);
-
-    // 주어진 영화에 대한 리뷰들의 평점을 계산하여 가져옵니다.
-    @Query("select avg(score) from Review where movie = :movie and deleted = false")
-    BigDecimal calcScoreAvg(Movie movie);
+    Movie findByTitleContainingAndDirector(String title, String director);
 
     Page<Movie> findAllByDeletedFalse(Pageable pageable);
 
