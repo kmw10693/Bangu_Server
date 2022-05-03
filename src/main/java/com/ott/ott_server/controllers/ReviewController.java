@@ -34,18 +34,14 @@ public class ReviewController {
 
     /**
      * 리뷰 등록
-     *
      * @return
      */
-    @ApiImplicitParams({
-            @ApiImplicitParam(
-                    name = "X-AUTH-TOKEN",
-                    value = "로그인 성공 후 AccessToken",
-                    required = true, dataType = "String", paramType = "header")
-    })
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN",
+            value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
     @PostMapping
-    @ApiOperation(value = "리뷰 등록",
-            notes = "전달된 정보에 따라 리뷰를 등록합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
+    @ApiOperation(value = "리뷰 등록", notes = "전달된 정보에 따라 리뷰를 등록합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     public ReviewResponseData create(@Valid @RequestBody ReviewRequestData reviewRequestData) {
         User user = userUtil.findCurrentUser();
         Movie movie = movieService.getMovieDetailById(reviewRequestData.getMovieId());

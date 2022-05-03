@@ -13,9 +13,6 @@ import com.ott.ott_server.errors.GenreNotFoundException;
 import com.ott.ott_server.errors.MovieNotFoundException;
 import com.ott.ott_server.infra.*;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -60,9 +57,8 @@ public class MovieService {
     }
 
     public Movie getMovieDetailById(Long id) {
-        Movie movie = movieRepository.findById(id)
+        return movieRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(id));
-        return movie;
     }
 
     public Page<MovieResponseData> getSearchMovies(String search, Pageable pageable) throws ParseException {
@@ -140,7 +136,7 @@ public class MovieService {
     }
 
     private Optional<Ott> findIdByOttName(String title) {
-        return ottRepository.findByNameContaining(title);
+        return ottRepository.findByName(title);
     }
 
     private void setMovieOtt(Movie movie, Optional<Ott> ott) {

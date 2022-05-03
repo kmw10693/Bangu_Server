@@ -1,13 +1,9 @@
 package com.ott.ott_server.dto.review;
 
-import com.ott.ott_server.dto.movie.MovieRequestData;
-import com.ott.ott_server.dto.movie.MovieResponseData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;

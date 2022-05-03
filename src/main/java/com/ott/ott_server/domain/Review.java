@@ -53,7 +53,6 @@ public class Review extends BaseTimeEntity{
     private boolean deleted = false;
 
     public ReviewResponseData toReviewResponseData() {
-
         return ReviewResponseData.builder()
                 .id(id)
                 .userProfileData(user.toUserProfileData())
@@ -62,19 +61,6 @@ public class Review extends BaseTimeEntity{
                 .attention(attention)
                 .movieResponseData(movie.toMovieResponseData())
                 .reviewOttResponseData(ReviewOttResponseData.of(otts))
-                .dialogue(dialogue)
-                .content(content)
-                .score(score)
-                .build();
-    }
-
-    public ReviewResultData toReviewResultData() {
-
-        return ReviewResultData.builder()
-                .id(id)
-                .userProfileData(user.toUserProfileData())
-                .attention(attention)
-                .movieResponseData(movie.toMovieResponseData())
                 .dialogue(dialogue)
                 .content(content)
                 .score(score)
@@ -92,6 +78,5 @@ public class Review extends BaseTimeEntity{
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
-
 
 }

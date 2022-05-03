@@ -1,13 +1,9 @@
 package com.ott.ott_server.application;
 
-import com.github.dozermapper.core.Mapper;
 import com.ott.ott_server.domain.*;
 import com.ott.ott_server.domain.enums.Gender;
 import com.ott.ott_server.dto.movie.MovieResponseData;
-import com.ott.ott_server.dto.review.ReviewModificationData;
-import com.ott.ott_server.dto.review.ReviewOttResponseData;
-import com.ott.ott_server.dto.review.ReviewRequestData;
-import com.ott.ott_server.dto.review.ReviewResponseData;
+import com.ott.ott_server.dto.review.*;
 import com.ott.ott_server.dto.review.response.ReviewRes;
 import com.ott.ott_server.dto.review.response.ReviewSearchData;
 import com.ott.ott_server.errors.OttNameNotFoundException;
@@ -49,7 +45,6 @@ public class ReviewService {
      * @return
      */
     public Review createReview(Movie movie, User user, ReviewRequestData reviewRequestData) {
-
         Review review = reviewRepository.save(
                 Review.builder()
                         .user(user)
@@ -85,7 +80,7 @@ public class ReviewService {
     }
 
     private Ott findIdByOttName(String title) {
-        return ottRepository.findByNameContaining(title)
+        return ottRepository.findByName(title)
                 .orElseThrow(OttNameNotFoundException::new);
     }
 

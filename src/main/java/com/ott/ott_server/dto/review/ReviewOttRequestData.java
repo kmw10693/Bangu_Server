@@ -15,19 +15,15 @@ import javax.validation.constraints.NotNull;
 @ApiModel(value="리뷰 ott 등록 요청 정보")
 public class ReviewOttRequestData {
 
-    @NotNull
     @ApiParam(value = "tving 선택 여부", required = true, example = "true")
     private boolean tving;
 
-    @NotNull
     @ApiParam(value = "watcha 선택 여부", required = true, example = "true")
     private boolean watcha;
 
-    @NotNull
     @ApiParam(value = "netflix 선택 여부", required = true, example = "true")
     private boolean netflix;
 
-    @NotNull
     @ApiParam(value = "wavve 선택 여부", required = true, example = "true")
     private boolean wavve;
 

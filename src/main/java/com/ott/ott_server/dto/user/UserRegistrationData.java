@@ -53,7 +53,6 @@ public class UserRegistrationData {
     @ApiParam(value = "사용자 생년월일", required = true, example = "20010320")
     private String birth;
 
-    // 구독하는 OTT
     @ApiParam(value = "tving 구독 여부", required = true, example = "true")
     private boolean tving;
 
@@ -67,7 +66,6 @@ public class UserRegistrationData {
     private boolean wavve;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 1)
     private Gender gender;
 
     public UserRegistrationData() {

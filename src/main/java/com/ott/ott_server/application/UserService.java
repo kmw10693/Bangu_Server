@@ -67,19 +67,19 @@ public class UserService {
 
     private void checkSubscribe(UserRegistrationData userRegistrationData, User user) {
         if (userRegistrationData.isNetflix()) {
-            Ott ott = findIdByOttName("netflix");
+            Ott ott = findByOttName("netflix");
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isTving()) {
-            Ott ott = findIdByOttName("tving");
+            Ott ott = findByOttName("tving");
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWatcha()) {
-            Ott ott = findIdByOttName("watcha");
+            Ott ott = findByOttName("watcha");
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWavve()) {
-            Ott ott = findIdByOttName("wavve");
+            Ott ott = findByOttName("wavve");
             setUserOtt(user, ott);
         }
 
@@ -97,8 +97,8 @@ public class UserService {
                 .build());
     }
 
-    private Ott findIdByOttName(String title) {
-        return ottRepository.findByNameContaining(title)
+    private Ott findByOttName(String title) {
+        return ottRepository.findByName(title)
                 .orElseThrow(OttNameNotFoundException::new);
     }
 

@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface OttRepository extends JpaRepository<Ott, Long> {
 
-    Optional<Ott> findByNameContaining(String name);
+    Optional<Ott> findByName(String name);
 }
