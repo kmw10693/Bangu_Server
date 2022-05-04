@@ -106,4 +106,10 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("해당하는 장르가 없습니다!");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BookmarkUserException.class)
+    public ErrorResponse handleBookMarkBadRequest() {
+        return new ErrorResponse("자기의 리뷰를 북마크할 수 없습니다.");
+    }
+
 }

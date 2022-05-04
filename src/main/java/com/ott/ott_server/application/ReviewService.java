@@ -6,6 +6,7 @@ import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.dto.review.*;
 import com.ott.ott_server.dto.review.response.ReviewRes;
 import com.ott.ott_server.dto.review.response.ReviewSearchData;
+import com.ott.ott_server.errors.BookmarkUserException;
 import com.ott.ott_server.errors.OttNameNotFoundException;
 import com.ott.ott_server.errors.ReviewNotFoundException;
 import com.ott.ott_server.errors.UserNotMatchException;
@@ -322,6 +323,26 @@ public class ReviewService {
         List<BookMark> bookMarks = bookMarkRepository.findByUser(user);
         List<ReviewResponseData> reviews = bookMarks.stream().map(r -> r.getReview().toReviewResponseData()).collect(Collectors.toList());
         return new PageImpl<>(reviews, pageable, reviews.size());
+    }
+
+    public boolean bookmark(Long id) {
+        User user = userUtil.findCurrentUser();
+
+        Review review = reviewRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new ReviewNotFoundException(id));
+
+        if (review.getUser().getId() == user.getId()) {
+            throw new BookmarkUserException();
+        }
+
+        if (bookMarkRepository.existsByReviewAndUser(review, user)) {
+            BookMark bookMark = bookMarkRepository.findByReviewAndUser(review, user);
+            bookMarkRepository.delete(bookMark);
+            return false;
+        } else {
+            bookMarkRepository.save(new BookMark(review, user));
+            return true;
+        }
     }
 
 }

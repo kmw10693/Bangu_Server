@@ -13,4 +13,6 @@ public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
 
     List<BookMark> findByUser(User user);
 
+    BookMark findByReviewAndUser(Review review, User user);
+
 }

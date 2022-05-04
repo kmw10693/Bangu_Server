@@ -8,7 +8,6 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookMark extends BaseTimeEntity{
@@ -21,5 +20,11 @@ public class BookMark extends BaseTimeEntity{
 
     @ManyToOne(fetch = LAZY)
     private User user;
+
+    @Builder
+    public BookMark(Review review, User user) {
+        this.review = review;
+        this.user = user;
+    }
 
 }

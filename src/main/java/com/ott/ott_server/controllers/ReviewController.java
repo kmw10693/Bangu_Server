@@ -12,10 +12,12 @@ import com.ott.ott_server.dto.review.ReviewResponseData;
 import com.ott.ott_server.dto.review.response.ReviewSearchData;
 import com.ott.ott_server.utils.UserUtil;
 import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -173,10 +175,20 @@ public class ReviewController {
     @ApiImplicitParam(
             name = "X-AUTH-TOKEN", value = "로그인 성공 후 AccessToken",
             required = true, dataType = "String", paramType = "header")
-    @ApiOperation(value = "북마크한 리뷰 조회", notes = "북마크한 리뷰를 가져옵니다.")
+    @ApiOperation(value = "유저의 북마크한 리뷰 조회", notes = "유저의 북마크한 리뷰를 가져옵니다.")
     public Page<ReviewResponseData> getBookmark(Pageable pageable) {
         User user = userUtil.findCurrentUser();
         return reviewService.getBookmark(pageable);
+    }
+
+    @PostMapping("/bookmark/{reviewId}")
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN", value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
+    @ApiOperation(value = "리뷰 북마크 및 북마크 해제 하기", notes = "리뷰를 북마크시 true, 북마크 해제시 false를 반환 합니다.")
+    @ApiResponse(responseCode = "200", description = "북마크 및 북마크 해제를 성공적으로 한 경우")
+    public ResponseEntity<Boolean> bookmark(@PathVariable @ApiParam(value = "리뷰 인덱스", example = "1") Long reviewId){
+            return ResponseEntity.ok(reviewService.bookmark(reviewId));
     }
 
 }
