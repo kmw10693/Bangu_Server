@@ -39,7 +39,7 @@ public class SessionController {
     @PostMapping("/login")
     public TokenDto login(@ApiParam(value = "로그인 요청 Data", required = true)
                           @RequestBody UserLoginRequestData userLoginRequestData) {
-        String email = userLoginRequestData.getEmail();
+        String email = userLoginRequestData.getUserId();
         String password = userLoginRequestData.getPassword();
         TokenDto tokenDto = userService.login(email, password);
 

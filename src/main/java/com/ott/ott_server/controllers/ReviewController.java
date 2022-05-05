@@ -1,11 +1,9 @@
 package com.ott.ott_server.controllers;
 
-import com.ott.ott_server.application.MovieService;
 import com.ott.ott_server.application.ReviewService;
-import com.ott.ott_server.application.UserService;
-import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.domain.Review;
 import com.ott.ott_server.domain.User;
+import com.ott.ott_server.dto.review.GenreRequestData;
 import com.ott.ott_server.dto.review.ReviewModificationData;
 import com.ott.ott_server.dto.review.ReviewRequestData;
 import com.ott.ott_server.dto.review.ReviewResponseData;
@@ -16,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +28,6 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final MovieService movieService;
     private final UserUtil userUtil;
 
     /**
@@ -46,24 +42,24 @@ public class ReviewController {
     @ApiOperation(value = "리뷰 등록", notes = "전달된 정보에 따라 리뷰를 등록합니다. 헤더에 사용자 토큰 주입을 필요로 합니다.")
     public ReviewResponseData create(@Valid @RequestBody ReviewRequestData reviewRequestData) {
         User user = userUtil.findCurrentUser();
-        Movie movie = movieService.getMovieDetailById(reviewRequestData.getMovieId());
-        Review review = reviewService.createReview(movie, user, reviewRequestData);
-        return review.toReviewResponseData();
+        Review review = reviewService.createReview(user, reviewRequestData);
+        boolean bookmark = reviewService.checkBookmark(review, user);
+        return review.toReviewResponseData(bookmark);
     }
 
     /**
      * 리뷰 상세 조회
-     *
      * @param id
      * @return
      */
     @GetMapping("/{id}")
     @ApiOperation(value = "리뷰 상세 조회", notes = "식별자 값의 리뷰를 상세 조회합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
-    @ResponseStatus(HttpStatus.OK)
     public ReviewResponseData detail(@PathVariable("id") Long id) {
+        User user = userUtil.findCurrentUser();
         Review review = reviewService.getReviewById(id);
-        return review.toReviewResponseData();
+        boolean bookmark = reviewService.checkBookmark(review, user);
+        return review.toReviewResponseData(bookmark);
     }
 
     /**
@@ -82,12 +78,13 @@ public class ReviewController {
     public ReviewResponseData update(@PathVariable("id") Long id,
                                      @Valid @RequestBody ReviewModificationData reviewModificationData) {
         User user = userUtil.findCurrentUser();
-        return reviewService.update(id, user, reviewModificationData).toReviewResponseData();
+        Review review = reviewService.update(id, user, reviewModificationData);
+        boolean bookmark = reviewService.checkBookmark(review, user);
+        return review.toReviewResponseData(bookmark);
     }
 
     /**
      * 리뷰 삭제
-     *
      * @param id
      */
     @ApiImplicitParams({
@@ -111,16 +108,15 @@ public class ReviewController {
      * @param ott
      * @param genre
      */
-    @GetMapping("/{ott}/{genre}")
+    @PostMapping("/{ott}")
     @ApiImplicitParam(
             name = "X-AUTH-TOKEN",
             value = "로그인 성공 후 AccessToken",
             required = true, dataType = "String", paramType = "header")
     @ApiOperation(value = "영화 이름으로 리뷰 조회", notes = "ott와 장르, 제목으로 리뷰를 검색 합니다.")
     public ReviewSearchData list(@PathVariable("ott")
-                                 @ApiParam(value = "ott 이름 ex) netflix") String ott,
-                                 @PathVariable("genre")
-                                 @ApiParam(value = "genre 이름 ex) drama") String genre,
+                                 @ApiParam(value = "ott 이름 EX) 넷플릭스: NETFLIX, 왓챠: WATCHAPLAY, 웨이브: WAVVE, 티빙: TVING 으로 입력해주세요.") String ott,
+                                 GenreRequestData genre,
                                  @RequestParam @ApiParam(value = "검색 범위(홈: home, 내 방구석: mypage, 피드: feed)", example = "home") String type,
                                  @RequestParam @ApiParam(value = "영화 제목", example = "비밀의 숲") String title,
                                  @RequestParam @ApiParam(value = "성별/나이대 정렬 여부(홈에서만 가능)", example = "false") boolean sortType, Pageable pageable) {

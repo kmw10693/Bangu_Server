@@ -51,4 +51,7 @@ public class ReviewResponseData {
     @ApiModelProperty(value = "리뷰 내용", example = "좋아요")
     private String content;
 
+    @ApiModelProperty(value = "북마크 여부", example = "true")
+    private boolean bookmark;
+
 }

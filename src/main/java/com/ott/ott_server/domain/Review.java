@@ -52,7 +52,7 @@ public class Review extends BaseTimeEntity{
     @Builder.Default
     private boolean deleted = false;
 
-    public ReviewResponseData toReviewResponseData() {
+    public ReviewResponseData toReviewResponseData(boolean bookmark) {
         return ReviewResponseData.builder()
                 .id(id)
                 .userProfileData(user.toUserProfileData())
@@ -64,6 +64,7 @@ public class Review extends BaseTimeEntity{
                 .dialogue(dialogue)
                 .content(content)
                 .score(score)
+                .bookmark(bookmark)
                 .build();
     }
 

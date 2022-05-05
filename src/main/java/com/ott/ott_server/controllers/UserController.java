@@ -70,7 +70,6 @@ public class UserController {
     /**
      * 비밀번호 업데이트
      */
-    // 비밀번호가 유출될 수 있으니 void로 설정
     @ApiImplicitParam(
             name = "X-AUTH-TOKEN",
             value = "로그인 성공 후 AccessToken",

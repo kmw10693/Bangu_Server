@@ -41,7 +41,7 @@ public class UserService {
      * @return
      */
     public User signup(UserRegistrationData userRegistrationData) {
-        String email = userRegistrationData.getEmail();
+        String email = userRegistrationData.getUserId();
         String age = userRegistrationData.getBirth().substring(0, 4);
         if (userRepository.existsByEmail(email)) {
             throw new UserEmailDuplicationException(email);
@@ -67,19 +67,19 @@ public class UserService {
 
     private void checkSubscribe(UserRegistrationData userRegistrationData, User user) {
         if (userRegistrationData.isNetflix()) {
-            Ott ott = findByOttName("netflix");
+            Ott ott = findByOttName("NETFLIX");
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isTving()) {
-            Ott ott = findByOttName("tving");
+            Ott ott = findByOttName("TVING");
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWatcha()) {
-            Ott ott = findByOttName("watcha");
+            Ott ott = findByOttName("WATCHAPLAY");
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWavve()) {
-            Ott ott = findByOttName("wavve");
+            Ott ott = findByOttName("WAVVE");
             setUserOtt(user, ott);
         }
 

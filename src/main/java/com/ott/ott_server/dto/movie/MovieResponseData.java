@@ -16,9 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class MovieResponseData {
 
-    @ApiModelProperty(value = "영화 식별자", example = "1")
-    private Long id;
-
     @ApiModelProperty(value = "제목", example = "셜록")
     private String title;
 
@@ -27,13 +24,10 @@ public class MovieResponseData {
     @ApiModelProperty(value = "영화 이미지", example = "image.com")
     private String imageUrl;
 
-    @ApiModelProperty(value = "감독", example = "봉준호")
-    private String director;
-
-    @ApiModelProperty(value = "등장인물", example = "배두나, 조승우")
-    private String actor;
-
     @ApiModelProperty(value = "장르", example = "drama")
     private String genre;
 
+    public void addMovieOtts(MovieOttResponseData m) {
+        movieOtts.add(m);
+    }
 }

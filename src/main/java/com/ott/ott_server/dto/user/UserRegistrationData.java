@@ -1,7 +1,6 @@
 package com.ott.ott_server.dto.user;
 
 import com.github.dozermapper.core.Mapping;
-import com.ott.ott_server.domain.BaseTimeEntity;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.enums.Gender;
 import io.swagger.annotations.ApiModel;
@@ -11,7 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
@@ -32,7 +30,7 @@ public class UserRegistrationData {
     @ApiParam(value = "사용자 이메일", required = true, example = "test@email.com")
     @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{3,}$",
             message = "아이디는 영문 대,소문자와 숫자1개 이상씩 포함된 3자 이상의 아이디여야 합니다.")
-    private String email;
+    private String userId;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
     @Size(min=3, max=20)
@@ -77,7 +75,7 @@ public class UserRegistrationData {
 
     public User toEntity() {
         return User.builder()
-                .email(email)
+                .email(userId)
                 .password(password)
                 .nickname(nickname)
                 .gender(gender)

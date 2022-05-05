@@ -1,5 +1,6 @@
 package com.ott.ott_server.dto.review;
 
+import com.ott.ott_server.dto.movie.MovieOttResponseData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -8,6 +9,7 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,9 +17,16 @@ import java.math.BigDecimal;
 @ApiModel(value="리뷰 등록 요청 정보")
 public class ReviewRequestData {
 
-    @ApiModelProperty(value = "영화 식별자", required = true, example = "1")
-    @NotNull(message = "영화 식별자를 입력해주세요.")
-    private Long movieId;
+    @ApiModelProperty(value = "제목", example = "셜록")
+    private String title;
+
+    private List<MovieOttResponseData> movieOtts;
+
+    @ApiModelProperty(value = "영화 이미지", example = "image.com")
+    private String imageUrl;
+
+    @ApiModelProperty(value = "장르", example = "drama")
+    private String genre;
 
     private ReviewOttRequestData reviewOtt;
 

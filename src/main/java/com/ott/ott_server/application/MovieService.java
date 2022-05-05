@@ -1,6 +1,5 @@
 package com.ott.ott_server.application;
 
-import com.ott.ott_server.domain.Genre;
 import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.domain.MovieOtt;
 import com.ott.ott_server.domain.Ott;
@@ -38,7 +37,6 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final OttRepository ottRepository;
     private final MovieOttRepository movieOttRepository;
-    private final GenreRepository genreRepository;
 
     @Value("${social.naver.client-id}")
     private String CLIENT_ID;
@@ -78,13 +76,12 @@ public class MovieService {
             Movie movie = movieRepository.findByTitleContainingAndDirector(item.getTitle(), item.getDirector());
 
             if (movie == null) {
-                Genre genre = genreRepository.findByName("movie").orElseThrow(GenreNotFoundException::new);
                 movie = movieRepository.save(Movie.builder()
                         .title(item.getTitle())
                         .imageUrl(item.getImage())
                         .director(item.getDirector())
                         .actor(item.getActor())
-                        .genre(genre)
+                        .genre("#영화")
                         .build());
             }
             movies.add(movie);
@@ -98,8 +95,6 @@ public class MovieService {
     }
 
     public Movie registerMovie(MovieRequestData movieRequestData) {
-        Genre genre = genreRepository.findByName(movieRequestData.getGenre())
-                .orElseThrow(GenreNotFoundException::new);
 
         Movie movie = movieRepository.save(
                 Movie.builder()
@@ -107,7 +102,7 @@ public class MovieService {
                         .director(movieRequestData.getDirector())
                         .imageUrl(movieRequestData.getImageUrl())
                         .title(movieRequestData.getTitle())
-                        .genre(genre)
+                        .genre("movie")
                         .build()
         );
         checkSubscribe(movieRequestData, movie);
@@ -117,19 +112,19 @@ public class MovieService {
 
     private void checkSubscribe(MovieRequestData movieRequestData, Movie movie) {
         if (movieRequestData.getMovieOttRequestData().isNetflix()) {
-            Optional<Ott> ott = findIdByOttName("netflix");
+            Optional<Ott> ott = findIdByOttName("NETFLIX");
             setMovieOtt(movie, ott);
         }
         if (movieRequestData.getMovieOttRequestData().isTving()) {
-            Optional<Ott> ott = findIdByOttName("tving");
+            Optional<Ott> ott = findIdByOttName("TVING");
             setMovieOtt(movie, ott);
         }
         if (movieRequestData.getMovieOttRequestData().isWatcha()) {
-            Optional<Ott> ott = findIdByOttName("watcha");
+            Optional<Ott> ott = findIdByOttName("WATCHAPLAY");
             setMovieOtt(movie, ott);
         }
         if (movieRequestData.getMovieOttRequestData().isWavve()) {
-            Optional<Ott> ott = findIdByOttName("wavve");
+            Optional<Ott> ott = findIdByOttName("WAVVE");
             setMovieOtt(movie, ott);
         }
 

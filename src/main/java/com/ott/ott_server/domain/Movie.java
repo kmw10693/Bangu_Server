@@ -23,17 +23,13 @@ public class Movie extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "movie")
-    @Builder.Default
+    @OneToMany(mappedBy = "movie", orphanRemoval = true)
     private List<MovieOtt> otts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "movie")
-    @Builder.Default
+    @OneToMany(mappedBy = "movie", orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "genre_id")
-    private Genre genre;
+    private String genre;
 
     private String title;
 
@@ -48,12 +44,9 @@ public class Movie extends BaseTimeEntity{
 
     public MovieResponseData toMovieResponseData() {
         return MovieResponseData.builder()
-                .id(id)
-                .actor(actor)
-                .director(director)
                 .imageUrl(imageUrl)
                 .title(title)
-                .genre(genre.getName())
+                .genre(genre)
                 .movieOtts(otts.stream().map(MovieOtt::toMovieOttResponseData).collect(Collectors.toList()))
                 .build();
     }
@@ -63,6 +56,11 @@ public class Movie extends BaseTimeEntity{
                 .movieId(id)
                 .imageUrl(imageUrl)
                 .build();
+    }
+
+    public void setOtts(MovieOtt movieOtt) {
+        movieOtt.setMovieOtt(this);
+        otts.add(movieOtt);
     }
 
 }

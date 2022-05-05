@@ -2,6 +2,7 @@ package com.ott.ott_server.application;
 
 import com.ott.ott_server.domain.*;
 import com.ott.ott_server.domain.enums.Gender;
+import com.ott.ott_server.dto.movie.MovieOttResponseData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.dto.review.*;
 import com.ott.ott_server.dto.review.response.ReviewRes;
@@ -36,16 +37,29 @@ public class ReviewService {
     private final ReviewOttRepository reviewOttRepository;
     private final MovieRepository movieRepository;
     private final BookMarkRepository bookMarkRepository;
+    private final MovieOttRepository movieOttRepository;
 
     /**
      * 리뷰 생성
-     *
-     * @param movie
-     * @param user
-     * @param reviewRequestData
-     * @return
      */
-    public Review createReview(Movie movie, User user, ReviewRequestData reviewRequestData) {
+    public Review createReview(User user, ReviewRequestData reviewRequestData) {
+
+        Movie movie = movieRepository.findByTitle(reviewRequestData.getTitle());
+
+        if (movie == null) {
+            movie = movieRepository.save(Movie.builder()
+                    .genre(reviewRequestData.getGenre())
+                    .title(reviewRequestData.getTitle())
+                    .imageUrl(reviewRequestData.getImageUrl())
+                    .build());
+
+            List<MovieOttResponseData> movieOtts = reviewRequestData.getMovieOtts();
+            for (MovieOttResponseData movieOtt : movieOtts) {
+                Ott ott = ottRepository.findByName(movieOtt.getOttName()).orElseThrow(OttNameNotFoundException::new);
+                movieOttRepository.save(new MovieOtt(ott, movie));
+            }
+        }
+
         Review review = reviewRepository.save(
                 Review.builder()
                         .user(user)
@@ -62,22 +76,21 @@ public class ReviewService {
 
     private void checkSubscribe(ReviewRequestData reviewRequestData, Review review) {
         if (reviewRequestData.getReviewOtt().isNetflix()) {
-            Ott ott = findIdByOttName("netflix");
+            Ott ott = findIdByOttName("NETFLIX");
             setReviewOtt(review, ott);
         }
         if (reviewRequestData.getReviewOtt().isTving()) {
-            Ott ott = findIdByOttName("tving");
+            Ott ott = findIdByOttName("TVING");
             setReviewOtt(review, ott);
         }
         if (reviewRequestData.getReviewOtt().isWatcha()) {
-            Ott ott = findIdByOttName("watcha");
+            Ott ott = findIdByOttName("WATCHAPLAY");
             setReviewOtt(review, ott);
         }
         if (reviewRequestData.getReviewOtt().isWavve()) {
-            Ott ott = findIdByOttName("wavve");
+            Ott ott = findIdByOttName("WAVVE");
             setReviewOtt(review, ott);
         }
-
     }
 
     private Ott findIdByOttName(String title) {
@@ -86,7 +99,7 @@ public class ReviewService {
     }
 
     private void setReviewOtt(Review review, Ott ott) {
-        reviewOttRepository.save(ReviewOtt.builder()
+        reviewOttRepository.saveAndFlush(ReviewOtt.builder()
                 .review(review)
                 .ott(ott)
                 .build());
@@ -109,33 +122,53 @@ public class ReviewService {
      * @param ott
      * @param genre
      */
-    public ReviewSearchData getReviews(String ott, String genre, String type, String title, boolean sortType, Pageable pageable) {
+    public ReviewSearchData getReviews(String ott, GenreRequestData genre, String type, String title, boolean sortType, Pageable pageable) {
 
         User user = userUtil.findCurrentUser();
         Long birth = user.getBirth();
         Gender gender = user.getGender();
-        Page<Review> reviews = null;
+        List<Review> reviews = null;
+        List<Review> reviewsByGenre = new ArrayList<>();
 
         if (type.equals("home")) {
             if (sortType == false) {
-                reviews = reviewRepository.findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(genre, ott, title, pageable);
+                reviews = reviewRepository.findByMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(ott, title);
             } else {
-                reviews = reviewRepository.findByMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(genre, ott, title, birth, gender, pageable);
+                reviews = reviewRepository.findByMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(ott, title, birth, gender);
             }
         } else if (type.equals("mypage")) {
-            reviews = reviewRepository.findByUserAndMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(user, genre, ott, title, pageable);
+            reviews = reviewRepository.findByUserAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(user, ott, title);
         } else if (type.equals("feed")) {
             List<Follow> followList = followRepository.findByFromUser(user);
             List<User> followings = new ArrayList<>();
             followList.stream().forEach(r -> followings.add(r.getToUser()));
-            reviews = reviewRepository.findByUserInAndMovieGenreNameAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(followings, genre, ott, title, pageable);
+            reviews = reviewRepository.findByUserInAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(followings, ott, title);
         }
 
-        List<ReviewRes> reviewRes = new ArrayList<>();
-        List<Movie> movie = movieRepository.findByGenreNameAndOttsOttNameAndTitleContainingAndDeletedIsFalse(genre, ott, title);
+        List<Movie> movie = movieRepository.findByOttsOttNameAndTitleContainingAndDeletedIsFalse(ott, title);
+        List<Movie> movieByGenre = new ArrayList<>();
+
+        if (genre.getGenre() != null) {
+            for (String s : genre.getGenre()) {
+                for (Review r : reviews) {
+                    if (r.getMovie().getGenre().contains(s)) {
+                        reviewsByGenre.add(r);
+                    }
+                }
+                for (Movie m : movie) {
+                    if (m.getGenre().contains(s)) {
+                        movieByGenre.add(m);
+                    }
+                }
+            }
+            reviews = reviewsByGenre;
+            movie = movieByGenre;
+        }
 
         List<MovieResponseData> movieResponseData = movie.stream()
                 .map(Movie::toMovieResponseData).collect(Collectors.toList());
+
+        List<ReviewRes> reviewRes = new ArrayList<>();
 
         for (Review review : reviews) {
             Boolean followState = followRepository.existsByFromUserIdAndToUserId(user.getId(), review.getUser().getId());
@@ -152,7 +185,7 @@ public class ReviewService {
                     .bookMark(bookmark)
                     .content(review.getContent())
                     .title(review.getMovie().getTitle())
-                    .genre(review.getMovie().getGenre().getName())
+                    .genre(review.getMovie().getGenre())
                     .imageUrl(review.getMovie().getImageUrl())
                     .score(review.getScore())
                     .reviewOtts(ReviewOttResponseData.of(review.getOtts()))
@@ -215,13 +248,14 @@ public class ReviewService {
         Gender gender = user.getGender();
         List<Review> reviews;
 
+
         if (sort == true) {
             reviews = reviewRepository.findByMovieTitleContainingAndUserBirthAndUserGenderAndDeletedFalseOrderByIdDesc(title, birth, gender);
         } else {
             reviews = reviewRepository.findByMovieTitleContainingAndDeletedFalseOrderByIdDesc(title);
         }
         List<ReviewResponseData> reviewDatas = reviews.stream()
-                .map(Review::toReviewResponseData)
+                .map(r -> r.toReviewResponseData(checkBookmark(r, user)))
                 .collect(Collectors.toList());
 
         checkFollowing(user, reviewDatas);
@@ -266,7 +300,7 @@ public class ReviewService {
         List<Review> sortReviews = reviews.stream().filter(distinctByKey(r -> r.getId())).collect(Collectors.toList());
 
         List<ReviewResponseData> reviewResponseData = sortReviews.stream()
-                .map(Review::toReviewResponseData)
+                .map(r -> r.toReviewResponseData(checkBookmark(r, user)))
                 .collect(Collectors.toList());
 
         checkFollowing(user, reviewResponseData);
@@ -282,7 +316,7 @@ public class ReviewService {
         Page<Review> reviews = reviewRepository.findByUserIdAndDeletedFalseOrderByIdDesc(userId, pageable);
 
         List<ReviewResponseData> reviewResponseData = reviews.stream()
-                .map(Review::toReviewResponseData)
+                .map(r -> r.toReviewResponseData(checkBookmark(r, user)))
                 .collect(Collectors.toList());
 
         checkFollowing(user, reviewResponseData);
@@ -321,8 +355,15 @@ public class ReviewService {
     public Page<ReviewResponseData> getBookmark(Pageable pageable) {
         User user = userUtil.findCurrentUser();
         List<BookMark> bookMarks = bookMarkRepository.findByUser(user);
-        List<ReviewResponseData> reviews = bookMarks.stream().map(r -> r.getReview().toReviewResponseData()).collect(Collectors.toList());
+        List<ReviewResponseData> reviews = bookMarks.stream().map(r -> r.getReview().toReviewResponseData(checkBookmark(r.getReview(), user))).collect(Collectors.toList());
         return new PageImpl<>(reviews, pageable, reviews.size());
+    }
+
+    public boolean checkBookmark(Review review, User user) {
+        if (bookMarkRepository.existsByReviewAndUser(review, user)) {
+            return true;
+        }
+        return false;
     }
 
     public boolean bookmark(Long id) {

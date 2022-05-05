@@ -21,5 +21,4 @@ public class Ott {
     @ApiModelProperty(value = "ott 이름", example = "netflix")
     private String name;
 
-
 }

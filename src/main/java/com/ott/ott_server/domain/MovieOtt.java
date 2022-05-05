@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class MovieOtt extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +26,22 @@ public class MovieOtt extends BaseTimeEntity {
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
+    @Builder
+    public MovieOtt(Ott ott, Movie movie) {
+        this.ott = ott;
+        this.movie = movie;
+    }
+
     public MovieOttResponseData toMovieOttResponseData() {
         return MovieOttResponseData.builder()
                 .ottName(ott.getName())
                 .ottId(ott.getId())
                 .build();
+    }
+
+    public void setMovieOtt(Movie movie) {
+        this.movie = movie;
+        movie.getOtts().add(this);
     }
 
 }
