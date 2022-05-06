@@ -47,7 +47,7 @@ public class ReviewService {
         Movie movie = movieRepository.findByTitle(reviewRequestData.getTitle());
 
         if (movie == null) {
-            movie = movieRepository.save(Movie.builder()
+            movie = movieRepository.saveAndFlush(Movie.builder()
                     .genre(reviewRequestData.getGenre())
                     .title(reviewRequestData.getTitle())
                     .imageUrl(reviewRequestData.getImageUrl())
@@ -58,11 +58,12 @@ public class ReviewService {
             List<MovieOttResponseData> movieOtts = reviewRequestData.getMovieOtts();
             for (MovieOttResponseData movieOtt : movieOtts) {
                 Ott ott = ottRepository.findByName(movieOtt.getOttName()).orElseThrow(OttNameNotFoundException::new);
-                movieOttRepository.save(new MovieOtt(ott, movie));
+                MovieOtt otts = movieOttRepository.save(new MovieOtt(ott, movie));
+                movie.addOtt(otts);
             }
         }
 
-        Review review = reviewRepository.save(
+        Review review = reviewRepository.saveAndFlush(
                 Review.builder()
                         .user(user)
                         .attention(reviewRequestData.getAttention())
@@ -101,10 +102,12 @@ public class ReviewService {
     }
 
     private void setReviewOtt(Review review, Ott ott) {
-        reviewOttRepository.saveAndFlush(ReviewOtt.builder()
+        ReviewOtt reviewOtt = reviewOttRepository.saveAndFlush(ReviewOtt.builder()
                 .review(review)
                 .ott(ott)
                 .build());
+
+        review.addOtts(reviewOtt);
     }
 
     /**

@@ -25,9 +25,11 @@ public class Movie extends BaseTimeEntity{
     private Long id;
 
     @OneToMany(mappedBy = "movie", orphanRemoval = true)
+    @Builder.Default
     private List<MovieOtt> otts = new ArrayList<>();
 
     @OneToMany(mappedBy = "movie", orphanRemoval = true)
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     private String genre;
@@ -67,9 +69,13 @@ public class Movie extends BaseTimeEntity{
                 .build();
     }
 
-    public void setOtts(MovieOtt movieOtt) {
-        movieOtt.setMovieOtt(this);
-        otts.add(movieOtt);
+    public void addReview(Review review) {
+        review.setMovie(this);
+        reviews.add(review);
+    }
+
+    public void addOtt(MovieOtt ott) {
+        otts.add(ott);
     }
 
 }

@@ -9,6 +9,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.awt.print.Book;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,4 +81,12 @@ public class Review extends BaseTimeEntity{
         this.deleted = deleted;
     }
 
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+        movie.getReviews().add(this);
+    }
+
+    public void addOtts(ReviewOtt ott) {
+        otts.add(ott);
+    }
 }

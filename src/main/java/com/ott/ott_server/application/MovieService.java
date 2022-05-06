@@ -150,9 +150,7 @@ public class MovieService {
                 .map(r -> r.toMovieListRes(r.getReviews()))
                 .collect(Collectors.toList());
 
-        final int start = (int) pageable.getOffset();
-        final int end = Math.min((start + pageable.getPageSize()), movieListRes.size());
-        return new PageImpl<>(movieListRes.subList(start, end), pageable, movieListRes.size());
+        return new PageImpl<>(movieListRes, pageable, movies.getTotalElements());
     }
 
 }
