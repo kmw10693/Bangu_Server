@@ -70,6 +70,7 @@ public class CrawService {
             boolean duplicate = false;
             for (MovieResponseData m : movieResponseData) {
                 if (m.getTitle().equals(movieTitle)) {
+                    duplicate = true;
                     boolean check = false;
                     for (MovieOttResponseData movieOttResponseData : m.getMovieOtts()) {
                         if (movieOttResponseData.getOttName().equals(response.getOttName())) {
@@ -100,7 +101,6 @@ public class CrawService {
                             if (actor != null) m.setActor(actor);
                         }
                         m.addMovieOtts(response);
-                        duplicate = true;
                         break;
                     }
                 }
