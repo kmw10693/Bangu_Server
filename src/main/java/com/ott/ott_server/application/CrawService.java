@@ -144,7 +144,7 @@ public class CrawService {
         Document doc = null;
         try {
             doc = Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36")
+                    .userAgent("Chrome")
                     .get();
         } catch (NullPointerException e) {
             e.printStackTrace();
