@@ -46,7 +46,7 @@ public class MovieController {
      */
     @GetMapping("/lists")
     @ApiOperation(value = "회원가입 성공시 영화 리스트", notes = "영화 리스트의 평점과 표지 이미지를 가져옵니다.")
-    public Page<MovieListRes> getMovies(@PageableDefault(size = 10) Pageable pageable) {
+    public Page<MovieListRes> getMovies(Pageable pageable) {
         return movieService.getMovieLists(pageable);
     }
 
