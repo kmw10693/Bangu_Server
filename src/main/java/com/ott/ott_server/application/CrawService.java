@@ -90,8 +90,10 @@ public class CrawService {
                             } else if (response.getOttName().equals("TVING")) {
                                 Document document = connect(info);
                                 if (document != null) {
-                                    director = document.select("dd").get(0).text();
-                                    actor = document.select("dd").get(1).text();
+                                    if (document.select("dd").size() >= 2) {
+                                        director = document.select("dd").get(0).text();
+                                        actor = document.select("dd").get(1).text();
+                                    }
                                 }
                             }
                             if (director != null) m.setDirector(director);
@@ -114,8 +116,10 @@ public class CrawService {
                 } else if (response.getOttName().equals("TVING")) {
                     Document document = connect(info);
                     if (document != null) {
-                        director = document.select("dd").get(0).text();
-                        actor = document.select("dd").get(1).text();
+                        if (document.select("dd").size() >= 2) {
+                            director = document.select("dd").get(0).text();
+                            actor = document.select("dd").get(1).text();
+                        }
                     }
                 }
                 List<MovieOttResponseData> m = new ArrayList<>();
