@@ -124,7 +124,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .create_at(getCreateAt())
                 .update_at(getUpdateAt())
                 .nickname(nickname)
-                .email(email)
+                .userId(email)
                 .build();
     }
 
