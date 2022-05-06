@@ -147,7 +147,7 @@ public class MovieService {
 
         List<MovieListRes> movieListRes = movies
                 .stream()
-                .map(Movie::toMovieListRes)
+                .map(r -> r.toMovieListRes(r.getReviews()))
                 .collect(Collectors.toList());
         return new PageImpl<>(movieListRes, pageable, movies.getTotalElements());
     }

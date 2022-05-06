@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.util.OptionalDouble;
 
 @Getter
 @AllArgsConstructor
@@ -23,6 +23,6 @@ public class MovieListRes {
     private String imageUrl;
 
     @ApiModelProperty(value = "영화 평점", example = "4.5")
-    private BigDecimal score;
+    private double score;
 
 }

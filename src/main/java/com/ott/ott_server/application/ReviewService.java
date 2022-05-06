@@ -51,6 +51,8 @@ public class ReviewService {
                     .genre(reviewRequestData.getGenre())
                     .title(reviewRequestData.getTitle())
                     .imageUrl(reviewRequestData.getImageUrl())
+                    .actor(reviewRequestData.getActor())
+                    .director(reviewRequestData.getDirector())
                     .build());
 
             List<MovieOttResponseData> movieOtts = reviewRequestData.getMovieOtts();

@@ -27,6 +27,12 @@ public class MovieResponseData {
     @ApiModelProperty(value = "장르", example = "drama")
     private String genre;
 
+    @ApiModelProperty(value = "감독", example = "반구, 반구")
+    private String director;
+
+    @ApiModelProperty(value = "배우", example = "반구, 반구")
+    private String actor;
+
     public void addMovieOtts(MovieOttResponseData m) {
         movieOtts.add(m);
     }

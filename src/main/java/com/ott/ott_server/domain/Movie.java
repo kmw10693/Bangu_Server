@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 import static javax.persistence.FetchType.LAZY;
@@ -47,13 +48,21 @@ public class Movie extends BaseTimeEntity{
                 .imageUrl(imageUrl)
                 .title(title)
                 .genre(genre)
+                .actor(actor)
+                .director(director)
                 .movieOtts(otts.stream().map(MovieOtt::toMovieOttResponseData).collect(Collectors.toList()))
                 .build();
     }
 
-    public MovieListRes toMovieListRes() {
+    public MovieListRes toMovieListRes(List<Review> reviews) {
+        OptionalDouble average = reviews.stream().mapToDouble(r -> r.getScore().doubleValue()).average();
+        Double score = null;
+        if(average.isPresent()) {
+            score = average.getAsDouble();
+        }
         return MovieListRes.builder()
                 .movieId(id)
+                .score(score)
                 .imageUrl(imageUrl)
                 .build();
     }

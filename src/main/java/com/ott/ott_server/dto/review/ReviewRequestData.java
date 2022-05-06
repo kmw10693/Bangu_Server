@@ -28,6 +28,12 @@ public class ReviewRequestData {
     @ApiModelProperty(value = "장르", example = "drama")
     private String genre;
 
+    @ApiModelProperty(value = "감독", example = "반구, 반구")
+    private String director;
+
+    @ApiModelProperty(value = "배우", example = "반구, 반구")
+    private String actor;
+
     private ReviewOttRequestData reviewOtt;
 
     @ApiModelProperty(value = "별점", required = true, example = "4.5")
