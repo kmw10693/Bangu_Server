@@ -82,7 +82,9 @@ public class FollowService {
         if (nickname != null) {
             followData = followData.stream().filter(r -> r.getNickname().equals(nickname)).collect(Collectors.toList());
         }
-        Page<FollowData> followDataPage = new PageImpl<>(followData, pageable, followData.size());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), followData.size());
+        Page<FollowData> followDataPage = new PageImpl<>(followData.subList(start, end), pageable, followData.size());
 
         return new FollowResultData(followers.size(), followDataPage);
     }
@@ -120,7 +122,9 @@ public class FollowService {
         if (nickname != null) {
             followResultData = followResultData.stream().filter(r -> r.getNickname().equals(nickname)).collect(Collectors.toList());
         }
-        Page<FollowData> followDataPage = new PageImpl<>(followResultData, pageable, followResultData.size());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), followResultData.size());
+        Page<FollowData> followDataPage = new PageImpl<>(followResultData.subList(start, end), pageable, followResultData.size());
 
         return new FollowingResultData(followers.size(), followDataPage);
     }
