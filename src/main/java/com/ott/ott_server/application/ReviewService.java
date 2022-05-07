@@ -197,7 +197,9 @@ public class ReviewService {
                     .build());
         }
 
-        return new ReviewSearchData(movieResponseData, new PageImpl<>(reviewRes, pageable, reviewRes.size()));
+        final int start = (int)pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), reviewRes.size());
+        return new ReviewSearchData(movieResponseData, new PageImpl<>(reviewRes.subList(start, end), pageable, reviewRes.size()));
     }
 
 
@@ -367,7 +369,10 @@ public class ReviewService {
         User user = userUtil.findCurrentUser();
         List<BookMark> bookMarks = bookMarkRepository.findByUser(user);
         List<ReviewResponseData> reviews = bookMarks.stream().map(r -> r.getReview().toReviewResponseData(checkBookmark(r.getReview(), user))).collect(Collectors.toList());
-        return new PageImpl<>(reviews, pageable, reviews.size());
+
+        final int start = (int)pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), reviews.size());
+        return new PageImpl<>(reviews.subList(start, end), pageable, reviews.size());
     }
 
     public boolean checkBookmark(Review review, User user) {
