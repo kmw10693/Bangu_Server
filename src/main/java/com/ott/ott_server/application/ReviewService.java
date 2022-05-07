@@ -274,7 +274,7 @@ public class ReviewService {
 
         Long birth = user.getBirth();
         Gender gender = user.getGender();
-        Page<Review> reviews = null;
+        List<Review> reviews = new ArrayList<>();
 
         List<UserOtt> userOtt = user.getUserOtt();
         List<Ott> otts = new ArrayList<>();
@@ -285,11 +285,11 @@ public class ReviewService {
 
         // 만약 홈인 경우
         if (type.equals("home")) {
-            reviews = reviewRepository.findByOttsOttInAndDeletedIsFalseOrderByIdDesc(otts, pageable);
+            reviews = reviewRepository.findByOttsOttInAndDeletedIsFalseAndRevealedIsTrueOrderByIdDesc(otts);
         }
         // 만약 본인인 경우
         else if (type.equals("myReviews")) {
-            reviews = reviewRepository.findByUserOrderByIdDesc(user, pageable);
+            reviews = reviewRepository.findByUserOrderByIdDesc(user);
         }
         // 팔로잉하는 경우
         else if (type.equals("following")) {
@@ -299,17 +299,23 @@ public class ReviewService {
             // 유저 팔로우에 팔로우를 추가한다.
             followList.stream().forEach(r -> followings.add(r.getToUser()));
             // 팔로우 리스트의 리뷰들을 리스트로 가져오고 저장한다.
-            reviews = reviewRepository.findByUserInAndDeletedFalseOrderByIdDesc(followings, pageable);
+            reviews = reviewRepository.findByUserInAndDeletedFalseAndRevealedIsTrueOrderByIdDesc(followings);
         }
 
-        List<Review> sortReviews = reviews.stream().filter(distinctByKey(r -> r.getId())).collect(Collectors.toList());
+        reviews = reviews.stream()
+                .filter(distinctByKey(r -> r.getId()))
+                .collect(Collectors.toList());
 
-        List<ReviewResponseData> reviewResponseData = sortReviews.stream()
+        List<ReviewResponseData> reviewResponseData = reviews.stream()
                 .map(r -> r.toReviewResponseData(checkBookmark(r, user)))
                 .collect(Collectors.toList());
 
+
         checkFollowing(user, reviewResponseData);
-        return new PageImpl<>(reviewResponseData, pageable, sortReviews.size());
+
+        final int start = (int)pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), reviewResponseData.size());
+        return new PageImpl<>(reviewResponseData.subList(start, end), pageable, reviews.size());
     }
 
     /**

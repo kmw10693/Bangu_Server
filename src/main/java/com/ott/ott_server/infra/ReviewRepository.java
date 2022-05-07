@@ -26,13 +26,14 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByMovieTitleContainingAndDeletedFalseOrderByIdDesc(String title);
 
-    Page<Review> findByOttsOttInAndDeletedIsFalseOrderByIdDesc(List<Ott> otts, Pageable pageable);
+    // 홈에서 불러오기
+    List<Review> findByOttsOttInAndDeletedIsFalseAndRevealedIsTrueOrderByIdDesc(List<Ott> otts);
 
     // 유저의 리뷰 가져오기
-    Page<Review> findByUserOrderByIdDesc(User user, Pageable pageable);
+    List<Review> findByUserOrderByIdDesc(User user);
 
     // 팔로우 하는 유저의 리뷰 가져오기
-    Page<Review> findByUserInAndDeletedFalseOrderByIdDesc(List<User> users, Pageable pageable);
+    List<Review> findByUserInAndDeletedFalseAndRevealedIsTrueOrderByIdDesc(List<User> users);
 
     // 유저 아이디의 삭제 안된 리뷰 가져오기
     Page<Review> findByUserIdAndDeletedFalseOrderByIdDesc(Long userId, Pageable pageable);
