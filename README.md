@@ -22,5 +22,7 @@
 [Swagger API](https://bangu.shop/swagger-ui/index.html)
 
 ## 🔨 Tech Stack 
+<img src="https://img.shields.io/badge/Spring-6DB33F?style=flat&logo=Spring Boot&logoColor=white"> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat&logo=Spring Security&logoColor=white"> <img src="https://img.shields.io/badge/Amazon AWS-FF9900?style=flat&logo=Amazon AWS&logoColor=white"> <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat&logo=Amazon EC2&logoColor=white"> <img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=Amazon RDS&logoColor=white"> <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat&logo=GitHub Actions&logoColor=white"> <img src="https://img.shields.io/badge/Swagger-85EA2D?style=flat&logo=Swagger&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white">
 
-<img src="https://img.shields.io/badge/Spring-#6DB33F?style=flat&logo=spring&logoColor=white"/>
+## 🧙 Frontend
+[FrontEnd](https://github.com/LeeYongIn0517/Bangu_android)
