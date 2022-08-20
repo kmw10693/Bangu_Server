@@ -52,6 +52,10 @@ public class ReviewController {
      * @param id
      * @return
      */
+    @ApiImplicitParam(
+            name = "X-AUTH-TOKEN",
+            value = "로그인 성공 후 AccessToken",
+            required = true, dataType = "String", paramType = "header")
     @GetMapping("/{id}")
     @ApiOperation(value = "리뷰 상세 조회", notes = "식별자 값의 리뷰를 상세 조회합니다.")
     @ApiImplicitParam(name = "id", dataType = "integer", value = "리뷰 식별자")
