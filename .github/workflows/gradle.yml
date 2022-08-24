@@ -55,9 +55,9 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ AWS_ACCESS_KEY_ID }}
+          host: ${{ secrets.AWS_ACCESS_KEY_ID }}
           username: ec2-user
-          key: ${{ AWS_SECRET_ACCESS_KEY }}
+          key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           script: |
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/bangu-web
