@@ -61,6 +61,5 @@ jobs:
           script: |
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/bangu-web
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/bangu-nginx
             docker-compose up -d
             docker image prune -f
