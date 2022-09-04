@@ -26,7 +26,6 @@ public class UserController {
     private final FollowService followService;
     private final UserUtil userUtil;
 
-
     /**
      * 아이디 중복 확인 API
      * [GET] /users/emailCheck/:userEmail

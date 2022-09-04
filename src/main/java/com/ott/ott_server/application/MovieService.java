@@ -102,11 +102,10 @@ public class MovieService {
                         .director(movieRequestData.getDirector())
                         .imageUrl(movieRequestData.getImageUrl())
                         .title(movieRequestData.getTitle())
-                        .genre("movie")
+                        .genre(movieRequestData.getGenre())
                         .build()
         );
         checkSubscribe(movieRequestData, movie);
-
         return movie;
     }
 

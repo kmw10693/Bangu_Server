@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-
 @Api(tags = "리뷰 API")
 @RestController
 @RequestMapping("/reviews")

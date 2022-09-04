@@ -6,19 +6,18 @@ import com.ott.ott_server.dto.follow.response.FollowData;
 import com.ott.ott_server.dto.follow.response.FollowResultData;
 import com.ott.ott_server.dto.follow.response.FollowingResultData;
 import com.ott.ott_server.errors.FollowAlreadyExistException;
+import com.ott.ott_server.errors.FollowNotFoundException;
 import com.ott.ott_server.infra.FollowRepository;
-import com.ott.ott_server.infra.UserRepository;
+import com.ott.ott_server.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,17 +25,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FollowService {
 
+    private final UserUtil userUtil;
     private final FollowRepository followRepository;
-    private final UserRepository userRepository;
 
-    private void checkFollow(Long fromUserId, Long toUserId) {
-        if (followRepository.existsByFromUserIdAndToUserId(fromUserId, toUserId))
-            throw new FollowAlreadyExistException();
+    private boolean checkFollow(Long fromUserId, Long toUserId) {
+        if (followRepository.existsByFromUserIdAndToUserId(fromUserId, toUserId)){
+            return true;
+        }
+        return false;
     }
 
-
-    public void follow(User fromUser, User toUser) {
-        checkFollow(fromUser.getId(), toUser.getId());
+    public void follow(User toUser) {
+        User fromUser = userUtil.findCurrentUser();
+        if(checkFollow(fromUser.getId(), toUser.getId()) == true) {
+            throw new FollowAlreadyExistException();
+        }
         followRepository.save(
                 Follow.builder()
                         .fromUser(fromUser)
@@ -45,9 +48,13 @@ public class FollowService {
         );
     }
 
-    public void unFollow(User fromUser, User toUser) {
-        Optional<Follow> follow = followRepository.findByFromUserIdAndToUserId(fromUser.getId(), toUser.getId());
-        followRepository.deleteById(follow.get().getId());
+    public void unFollow(User toUser) {
+        User fromUser = userUtil.findCurrentUser();
+        if(checkFollow(fromUser.getId(), toUser.getId()) == false) {
+            throw new FollowNotFoundException();
+        }
+        Follow follow = followRepository.findByFromUserIdAndToUserId(fromUser.getId(), toUser.getId());
+        followRepository.deleteById(follow.getId());
     }
 
     public FollowResultData getFollower(Long userId, Long loginId, String nickname, Pageable pageable) {
@@ -82,6 +89,7 @@ public class FollowService {
         if (nickname != null) {
             followData = followData.stream().filter(r -> r.getNickname().equals(nickname)).collect(Collectors.toList());
         }
+
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), followData.size());
         Page<FollowData> followDataPage = new PageImpl<>(followData.subList(start, end), pageable, followData.size());

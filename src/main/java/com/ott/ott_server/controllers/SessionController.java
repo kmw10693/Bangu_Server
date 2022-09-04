@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -66,7 +67,7 @@ public class SessionController {
         return securityService.reissue(tokenRequestDto);
     }
 
-
+    @ApiIgnore
     @ApiOperation(
             value = "소셜 회원가입 - kakao",
             notes = "카카오로 회원가입을 합니다."
@@ -94,6 +95,7 @@ public class SessionController {
         return userId;
     }
 
+    @ApiIgnore
     @ApiOperation(
             value = "소셜 로그인 - kakao",
             notes = "카카오로 로그인을 합니다.")

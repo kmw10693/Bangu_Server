@@ -1,19 +1,14 @@
 package com.ott.ott_server.application;
 
-import com.ott.ott_server.domain.Movie;
-import com.ott.ott_server.domain.MovieOtt;
 import com.ott.ott_server.domain.Ott;
 import com.ott.ott_server.dto.movie.MovieOttResponseData;
 import com.ott.ott_server.dto.movie.MovieResponseData;
 import com.ott.ott_server.errors.OttNameNotFoundException;
-import com.ott.ott_server.infra.MovieOttRepository;
-import com.ott.ott_server.infra.MovieRepository;
 import com.ott.ott_server.infra.OttRepository;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -158,5 +152,6 @@ public class CrawService {
         }
         return doc;
     }
+
 }
 
