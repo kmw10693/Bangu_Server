@@ -10,16 +10,16 @@ import lombok.Getter;
 @ApiModel(value="영화 ott 등록 요청 정보")
 public class MovieOttRequestData {
 
-    @ApiModelProperty(value = "tving 소속 여부", example = "true")
+    @ApiModelProperty(value = "Tving 소속 여부", example = "true")
     private boolean tving;
 
-    @ApiModelProperty(value = "watcha 소속 여부", example = "true")
+    @ApiModelProperty(value = "Watcha 소속 여부", example = "true")
     private boolean watcha;
 
-    @ApiModelProperty(value = "netflix 소속 여부", example = "true")
+    @ApiModelProperty(value = "Netflix 소속 여부", example = "true")
     private boolean netflix;
 
-    @ApiModelProperty(value = "wavve 소속 여부", example = "true")
+    @ApiModelProperty(value = "Wavve 소속 여부", example = "true")
     private boolean wavve;
 
     public MovieOttRequestData() {

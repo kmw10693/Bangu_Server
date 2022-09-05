@@ -36,9 +36,7 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserNickNameDuplicationException.class)
-    public ErrorResponse handleUserNickNameIsAlreadyExists() {
-        return new ErrorResponse("User's nickname already exists");
-    }
+    public ErrorResponse handleUserNickNameIsAlreadyExists() { return new ErrorResponse("User's nickname already exists"); }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(EmailLoginFailedException.class)
@@ -66,9 +64,7 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(AccessDeniedException.class)
-    public ErrorResponse handleAccessDeniedPoint() {
-        return new ErrorResponse("Permission not accessible to this resource.");
-    }
+    public ErrorResponse handleAccessDeniedPoint() { return new ErrorResponse("Permission not accessible to this resource."); }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RefreshTokenException.class)
@@ -110,6 +106,12 @@ public class ControllerErrorAdvice {
     @ExceptionHandler(BookmarkUserException.class)
     public ErrorResponse handleBookMarkBadRequest() {
         return new ErrorResponse("자기의 리뷰를 북마크할 수 없습니다.");
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(FollowNotFoundException.class)
+    public ErrorResponse handleFollowingNotFound() {
+        return new ErrorResponse("팔로우 되어 있지 않는 사용자 입니다!");
     }
 
 }

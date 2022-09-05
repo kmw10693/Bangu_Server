@@ -12,6 +12,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/exception")
 public class ExceptionController {
+
     @GetMapping("/entrypoint")
     @ApiIgnore
     public void entryPointException() {
@@ -22,4 +23,5 @@ public class ExceptionController {
     public void accessDeniedException() {
         throw new AccessDeniedException();
     }
+
 }
