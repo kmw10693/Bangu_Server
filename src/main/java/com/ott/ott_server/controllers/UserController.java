@@ -61,9 +61,9 @@ public class UserController {
     @ApiOperation(value = "현재 사용자 조회", notes = "발급받은 토큰을 통해 현재 사용자의 정보를 조회합니다.")
     @GetMapping
     @ApiResponse(responseCode = "200", description = "사용자를 정상적으로 조회한 경우")
-    public UserResultData detail() {
+    public ResponseEntity<UserResultData> detail() {
         User user = userUtil.findCurrentUser();
-        return user.toUserResultData();
+        return ResponseEntity.ok(user.toUserResultData());
     }
 
     /**

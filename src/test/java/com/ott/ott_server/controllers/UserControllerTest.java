@@ -7,6 +7,7 @@ import com.ott.ott_server.config.SecurityConfig;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.enums.Gender;
 import com.ott.ott_server.errors.UserEmailDuplicationException;
+import com.ott.ott_server.errors.UserNickNameDuplicationException;
 import com.ott.ott_server.filter.JwtAuthenticationFilter;
 import com.ott.ott_server.provider.JwtProvider;
 import com.ott.ott_server.utils.UserUtil;
@@ -27,11 +28,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
@@ -80,7 +83,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("존재하는_사용자를_조회하는_경우")
+    @DisplayName("존재하는_아이디를_조회하는_경우")
     void confirmEmail() throws Exception {
 
         given(userService.isDuplicateEmail("abc123"))
@@ -93,5 +96,57 @@ class UserControllerTest {
                 .andDo(print());
         verify(userService).isDuplicateEmail("abc123");
     }
+
+    @Test
+    @DisplayName("존재하지_않은_아이디를_확인하려는_경우")
+    void confirmInvalidEmail() throws Exception {
+
+        given(userService.isDuplicateEmail("khj10693"))
+                .willReturn(false);
+
+        mockMvc.perform(
+                        get("/users/emailCheck/khj10693")
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        containsString("false")
+                ))
+                .andDo(print());
+        verify(userService).isDuplicateEmail("khj10693");
+    }
+
+    @Test
+    @DisplayName("존재하는_닉네임를_조회하는_경우")
+    void confirmNickname() throws Exception {
+
+        given(userService.isDuplicateNickname("bangu"))
+                .willThrow(new UserNickNameDuplicationException("bangu"));
+
+        mockMvc.perform(
+                        get("/users/nicknameCheck/bangu")
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+        verify(userService).isDuplicateNickname("bangu");
+    }
+
+    @Test
+    @DisplayName("존재하지_않는_닉네임를_조회하는_경우")
+    void confirmInvalidNickname() throws Exception {
+
+        given(userService.isDuplicateNickname("bangu"))
+                .willReturn(false);
+
+        mockMvc.perform(
+                        get("/users/nicknameCheck/bangu")
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        containsString("false")
+                ))
+                .andDo(print());
+        verify(userService).isDuplicateNickname("bangu");
+    }
+
 
 }

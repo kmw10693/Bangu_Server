@@ -36,9 +36,9 @@ public class SessionController {
     private final KakaoService kakaoService;
     private final JwtProvider jwtProvider;
 
-    @ApiOperation(value = "로그인", notes = "로그인 요청 data를 받아 로그인을 합니다.")
+    @ApiOperation(value = "로그인", notes = "로그인 요청 데이터를 받아 로그인을 합니다.")
     @PostMapping("/login")
-    public TokenDto login(@ApiParam(value = "로그인 요청 Data", required = true)
+    public TokenDto login(@ApiParam(value = "로그인 요청 데이터", required = true)
                           @RequestBody UserLoginRequestData userLoginRequestData) {
         String email = userLoginRequestData.getUserId();
         String password = userLoginRequestData.getPassword();
@@ -47,10 +47,14 @@ public class SessionController {
         return tokenDto;
     }
 
-    @ApiOperation(value = "회원가입", notes = "회원가입 요청 data를 받아 회원가입을 합니다.")
+    @ApiOperation(value = "회원가입", notes = "회원가입 요청 Data를 받아 회원가입을 합니다. " +
+            "1. 아이디는 영문 대,소문자와 숫자1개 이상씩 포함된 3자 이상의 아이디여야 합니다." +
+            "2. 비밀번호는 영문 대,소문자와 숫자1개 이상씩 포함된 3자 이상의 비밀번호여야 합니다." +
+            "3. 닉네임은 최대 8자리여야 합니다." +
+            "4. OTT 구독 여부는 true/false로 지정해주세요.")
     @PostMapping("/signup")
     public UserSignupResponseData signup(
-            @ApiParam(value = "회원 가입 요청 Data", required = true)
+            @ApiParam(value = "회원가입 요청 Data", required = true)
             @RequestBody @Valid UserRegistrationData userRegistrationData) {
         userRegistrationData.setPassword(passwordEncoder.encode(userRegistrationData.getPassword()));
         User user = userService.signup(userRegistrationData);
