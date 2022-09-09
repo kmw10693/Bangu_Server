@@ -3,7 +3,6 @@ package com.ott.ott_server.application;
 import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.domain.MovieOtt;
 import com.ott.ott_server.domain.Ott;
-import com.ott.ott_server.dto.movie.request.MovieOttRequestData;
 import com.ott.ott_server.dto.movie.response.MovieListResponseData;
 import com.ott.ott_server.dto.movie.request.MovieRequestData;
 import com.ott.ott_server.dto.movie.response.Item;

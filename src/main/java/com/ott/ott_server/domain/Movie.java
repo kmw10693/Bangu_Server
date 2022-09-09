@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
-public class Movie extends BaseTimeEntity{
+public class Movie extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,7 +55,7 @@ public class Movie extends BaseTimeEntity{
     public MovieListResponseData toMovieListRes(List<Review> reviews) {
         OptionalDouble average = reviews.stream().mapToDouble(r -> r.getScore().doubleValue()).average();
         Double score = null;
-        if(average.isPresent()) {
+        if (average.isPresent()) {
             score = average.getAsDouble();
         }
         return MovieListResponseData.builder()
