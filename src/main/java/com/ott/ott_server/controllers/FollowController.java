@@ -18,7 +18,6 @@ public class FollowController {
 
     private final FollowService followService;
     private final UserService userService;
-    private final UserUtil userUtil;
 
     @ApiImplicitParam(
             name = "X-AUTH-TOKEN",

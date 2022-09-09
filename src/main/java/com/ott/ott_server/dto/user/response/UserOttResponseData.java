@@ -1,4 +1,4 @@
-package com.ott.ott_server.dto.user;
+package com.ott.ott_server.dto.user.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

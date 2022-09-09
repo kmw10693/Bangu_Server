@@ -1,12 +1,10 @@
-package com.ott.ott_server.dto.movie;
+package com.ott.ott_server.dto.movie.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 @Getter
 @Setter

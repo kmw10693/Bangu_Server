@@ -29,7 +29,7 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     private boolean checkFollow(Long fromUserId, Long toUserId) {
-        if (followRepository.existsByFromUserIdAndToUserId(fromUserId, toUserId)){
+        if (followRepository.existsByFromUserIdAndToUserId(fromUserId, toUserId)) {
             return true;
         }
         return false;
@@ -37,7 +37,8 @@ public class FollowService {
 
     public void follow(User toUser) {
         User fromUser = userUtil.findCurrentUser();
-        if(checkFollow(fromUser.getId(), toUser.getId()) == true) {
+
+        if (checkFollow(fromUser.getId(), toUser.getId()) == true) {
             throw new FollowAlreadyExistException();
         }
         followRepository.save(
@@ -50,9 +51,10 @@ public class FollowService {
 
     public void unFollow(User toUser) {
         User fromUser = userUtil.findCurrentUser();
-        if(checkFollow(fromUser.getId(), toUser.getId()) == false) {
+        if (checkFollow(fromUser.getId(), toUser.getId()) == false) {
             throw new FollowNotFoundException();
         }
+
         Follow follow = followRepository.findByFromUserIdAndToUserId(fromUser.getId(), toUser.getId());
         followRepository.deleteById(follow.getId());
     }

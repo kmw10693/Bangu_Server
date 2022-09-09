@@ -2,8 +2,8 @@ package com.ott.ott_server.application;
 
 import com.ott.ott_server.domain.RefreshToken;
 import com.ott.ott_server.domain.User;
-import com.ott.ott_server.dto.token.TokenDto;
-import com.ott.ott_server.dto.token.TokenRequestDto;
+import com.ott.ott_server.dto.token.response.TokenDto;
+import com.ott.ott_server.dto.token.request.TokenRequestDto;
 import com.ott.ott_server.errors.RefreshTokenException;
 import com.ott.ott_server.errors.UserNotFoundException;
 import com.ott.ott_server.infra.RefreshTokenRepository;

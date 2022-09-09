@@ -1,4 +1,4 @@
-package com.ott.ott_server.dto.token;
+package com.ott.ott_server.dto.token.response;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;

@@ -1,7 +1,6 @@
 package com.ott.ott_server.domain;
 
-import com.ott.ott_server.dto.movie.MovieOttResponseData;
-import com.ott.ott_server.dto.user.UserOttResponseData;
+import com.ott.ott_server.dto.movie.response.MovieOttResponseData;
 import lombok.*;
 
 import javax.persistence.*;

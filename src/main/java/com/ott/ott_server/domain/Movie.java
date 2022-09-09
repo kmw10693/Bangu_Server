@@ -1,18 +1,14 @@
 package com.ott.ott_server.domain;
 
-import com.ott.ott_server.dto.movie.MovieListRes;
-import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.movie.response.MovieListResponseData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
 import lombok.*;
-import org.hibernate.metamodel.model.domain.spi.MapPersistentAttribute;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Builder
@@ -56,13 +52,13 @@ public class Movie extends BaseTimeEntity{
                 .build();
     }
 
-    public MovieListRes toMovieListRes(List<Review> reviews) {
+    public MovieListResponseData toMovieListRes(List<Review> reviews) {
         OptionalDouble average = reviews.stream().mapToDouble(r -> r.getScore().doubleValue()).average();
         Double score = null;
         if(average.isPresent()) {
             score = average.getAsDouble();
         }
-        return MovieListRes.builder()
+        return MovieListResponseData.builder()
                 .movieId(id)
                 .score(score)
                 .imageUrl(imageUrl)

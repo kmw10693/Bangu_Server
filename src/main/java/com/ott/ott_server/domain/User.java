@@ -2,10 +2,10 @@ package com.ott.ott_server.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ott.ott_server.domain.enums.Gender;
-import com.ott.ott_server.dto.user.UserLoginResponseData;
-import com.ott.ott_server.dto.user.UserProfileData;
-import com.ott.ott_server.dto.user.UserResultData;
-import com.ott.ott_server.dto.user.UserSignupResponseData;
+import com.ott.ott_server.dto.user.response.UserLoginResponseData;
+import com.ott.ott_server.dto.user.response.UserProfileData;
+import com.ott.ott_server.dto.user.response.UserResultData;
+import com.ott.ott_server.dto.user.response.UserSignupResponseData;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

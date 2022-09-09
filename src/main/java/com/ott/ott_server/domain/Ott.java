@@ -5,8 +5,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Getter
 @Entity
 @Builder
@@ -15,10 +13,10 @@ import static javax.persistence.FetchType.LAZY;
 public class Ott {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty(value = "ott 식별자 값", example = "1")
+    @ApiModelProperty(value = "OTT 식별자 값", example = "1")
     private Long id;
 
-    @ApiModelProperty(value = "ott 이름", example = "netflix")
+    @ApiModelProperty(value = "OTT 이름", example = "NETFLIX")
     private String name;
 
 }

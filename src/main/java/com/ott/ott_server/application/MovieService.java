@@ -3,12 +3,12 @@ package com.ott.ott_server.application;
 import com.ott.ott_server.domain.Movie;
 import com.ott.ott_server.domain.MovieOtt;
 import com.ott.ott_server.domain.Ott;
-import com.ott.ott_server.dto.movie.MovieListRes;
-import com.ott.ott_server.dto.movie.MovieRequestData;
-import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.movie.request.MovieOttRequestData;
+import com.ott.ott_server.dto.movie.response.MovieListResponseData;
+import com.ott.ott_server.dto.movie.request.MovieRequestData;
 import com.ott.ott_server.dto.movie.response.Item;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
 import com.ott.ott_server.dto.movie.response.NaverResponseData;
-import com.ott.ott_server.errors.GenreNotFoundException;
 import com.ott.ott_server.errors.MovieNotFoundException;
 import com.ott.ott_server.infra.*;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,6 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -43,6 +42,10 @@ public class MovieService {
     @Value("${social.naver.client-secret}")
     private String CLIENT_SECRET;
 
+    private static final String NETFLIX = "NETFLIX";
+    private static final String TVING = "TVING";
+    private static final String WATCHA = "WATCHAPLAY";
+    private static final String WAVVE = "WAVVE";
 
     public List<MovieResponseData> getMovies() {
         List<Movie> movies = movieRepository.findAll();
@@ -111,19 +114,19 @@ public class MovieService {
 
     private void checkSubscribe(MovieRequestData movieRequestData, Movie movie) {
         if (movieRequestData.getMovieOttRequestData().isNetflix()) {
-            Optional<Ott> ott = findIdByOttName("NETFLIX");
+            Optional<Ott> ott = findIdByOttName(NETFLIX);
             setMovieOtt(movie, ott);
         }
         if (movieRequestData.getMovieOttRequestData().isTving()) {
-            Optional<Ott> ott = findIdByOttName("TVING");
+            Optional<Ott> ott = findIdByOttName(TVING);
             setMovieOtt(movie, ott);
         }
         if (movieRequestData.getMovieOttRequestData().isWatcha()) {
-            Optional<Ott> ott = findIdByOttName("WATCHAPLAY");
+            Optional<Ott> ott = findIdByOttName(WATCHA);
             setMovieOtt(movie, ott);
         }
         if (movieRequestData.getMovieOttRequestData().isWavve()) {
-            Optional<Ott> ott = findIdByOttName("WAVVE");
+            Optional<Ott> ott = findIdByOttName(WAVVE);
             setMovieOtt(movie, ott);
         }
 
@@ -141,10 +144,10 @@ public class MovieService {
         );
     }
 
-    public Page<MovieListRes> getMovieLists(Pageable pageable) {
+    public Page<MovieListResponseData> getMovieLists(Pageable pageable) {
         Page<Movie> movies = movieRepository.findAllByDeletedFalse(pageable);
 
-        List<MovieListRes> movieListRes = movies
+        List<MovieListResponseData> movieListRes = movies
                 .stream()
                 .map(r -> r.toMovieListRes(r.getReviews()))
                 .collect(Collectors.toList());

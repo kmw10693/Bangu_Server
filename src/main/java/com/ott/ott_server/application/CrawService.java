@@ -1,8 +1,8 @@
 package com.ott.ott_server.application;
 
 import com.ott.ott_server.domain.Ott;
-import com.ott.ott_server.dto.movie.MovieOttResponseData;
-import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.movie.response.MovieOttResponseData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
 import com.ott.ott_server.errors.OttNameNotFoundException;
 import com.ott.ott_server.infra.OttRepository;
 import lombok.RequiredArgsConstructor;
@@ -154,4 +154,3 @@ public class CrawService {
     }
 
 }
-

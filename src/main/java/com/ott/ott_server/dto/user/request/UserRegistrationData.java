@@ -1,11 +1,10 @@
-package com.ott.ott_server.dto.user;
+package com.ott.ott_server.dto.user.request;
 
 import com.github.dozermapper.core.Mapping;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.enums.Gender;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

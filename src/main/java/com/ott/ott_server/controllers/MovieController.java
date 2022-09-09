@@ -3,9 +3,10 @@ package com.ott.ott_server.controllers;
 import com.ott.ott_server.application.CrawService;
 import com.ott.ott_server.application.MovieService;
 import com.ott.ott_server.domain.Movie;
-import com.ott.ott_server.dto.movie.MovieListRes;
-import com.ott.ott_server.dto.movie.MovieRequestData;
-import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.movie.request.MovieOttRequestData;
+import com.ott.ott_server.dto.movie.response.MovieListResponseData;
+import com.ott.ott_server.dto.movie.request.MovieRequestData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 
@@ -36,7 +37,7 @@ public class MovieController {
 
     @GetMapping("/lists")
     @ApiOperation(value = "회원가입 성공 시 영화 리스트 보기", notes = "영화 리스트의 평점과 표지 이미지를 페이징 처리하여 가져옵니다.")
-    public Page<MovieListRes> getMovies(@PageableDefault(size = 10) Pageable pageable) {
+    public Page<MovieListResponseData> getMovies(@PageableDefault(size = 10) Pageable pageable) {
         return movieService.getMovieLists(pageable);
     }
 

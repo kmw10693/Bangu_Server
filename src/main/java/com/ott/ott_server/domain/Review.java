@@ -1,15 +1,12 @@
 package com.ott.ott_server.domain;
 
-import com.ott.ott_server.dto.movie.MovieResponseData;
-import com.ott.ott_server.dto.review.ReviewModificationData;
-import com.ott.ott_server.dto.review.ReviewOttResponseData;
-import com.ott.ott_server.dto.review.ReviewResponseData;
-import com.ott.ott_server.dto.review.ReviewResultData;
+import com.ott.ott_server.dto.review.request.ReviewModificationData;
+import com.ott.ott_server.dto.review.response.ReviewOttResponseData;
+import com.ott.ott_server.dto.review.response.ReviewResponseData;
 import lombok.*;
 
 import javax.persistence.*;
 
-import java.awt.print.Book;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

@@ -114,4 +114,10 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("팔로우 되어 있지 않는 사용자 입니다!");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(OttNameDuplicationException.class)
+    public ErrorResponse handleOttNameAlreadyExist() {
+        return new ErrorResponse("해당하는 OTT 이름이 존재합니다!");
+    }
+
 }

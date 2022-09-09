@@ -1,7 +1,7 @@
 package com.ott.ott_server.provider;
 
 import com.ott.ott_server.application.CustomUserDetailsService;
-import com.ott.ott_server.dto.token.TokenDto;
+import com.ott.ott_server.dto.token.response.TokenDto;
 import com.ott.ott_server.errors.AuthenticationEntrypointException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

@@ -2,10 +2,15 @@ package com.ott.ott_server.application;
 
 import com.ott.ott_server.domain.*;
 import com.ott.ott_server.domain.enums.Gender;
-import com.ott.ott_server.dto.movie.MovieOttResponseData;
-import com.ott.ott_server.dto.movie.MovieResponseData;
-import com.ott.ott_server.dto.review.*;
+import com.ott.ott_server.dto.movie.request.MovieOttRequestData;
+import com.ott.ott_server.dto.movie.response.MovieOttResponseData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
+import com.ott.ott_server.dto.review.request.GenreRequestData;
+import com.ott.ott_server.dto.review.request.ReviewModificationData;
+import com.ott.ott_server.dto.review.request.ReviewRequestData;
+import com.ott.ott_server.dto.review.response.ReviewOttResponseData;
 import com.ott.ott_server.dto.review.response.ReviewRes;
+import com.ott.ott_server.dto.review.response.ReviewResponseData;
 import com.ott.ott_server.dto.review.response.ReviewSearchData;
 import com.ott.ott_server.errors.BookmarkUserException;
 import com.ott.ott_server.errors.OttNameNotFoundException;

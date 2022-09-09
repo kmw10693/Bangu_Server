@@ -1,9 +1,11 @@
-package com.ott.ott_server.dto.movie;
+package com.ott.ott_server.dto.movie.request;
 
+import com.ott.ott_server.dto.movie.response.MovieOttResponseData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
+
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -28,4 +30,5 @@ public class MovieOttRequestData {
         netflix = false;
         wavve = false;
     }
+
 }
