@@ -13,30 +13,32 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     public ErrorResponse handleUserNotFound() {
-        return new ErrorResponse("User not found");
+        return new ErrorResponse("유저를 찾을 수 없습니다.");
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(MovieNotFoundException.class)
     public ErrorResponse handleMovieNotFound() {
-        return new ErrorResponse("Movie not found");
+        return new ErrorResponse("영화를 찾을 수 없습니다.");
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ReviewNotFoundException.class)
     public ErrorResponse handleReviewNotFound() {
-        return new ErrorResponse("Review not found");
+        return new ErrorResponse("리뷰를 찾을 수 없습니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserEmailDuplicationException.class)
     public ErrorResponse handleUserEmailIsAlreadyExists() {
-        return new ErrorResponse("User's email already exists");
+        return new ErrorResponse("유저 이메일이 이미 존재합니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserNickNameDuplicationException.class)
-    public ErrorResponse handleUserNickNameIsAlreadyExists() { return new ErrorResponse("User's nickname already exists"); }
+    public ErrorResponse handleUserNickNameIsAlreadyExists() {
+        return new ErrorResponse("유저 닉네임이 이미 존재합니다.");
+    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(EmailLoginFailedException.class)
@@ -47,7 +49,7 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserNotMatchException.class)
     public ErrorResponse handleUserNotMatch() {
-        return new ErrorResponse("The user ID of the review doesn't match");
+        return new ErrorResponse("리뷰 작성자가 일치하지 않습니다.");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -64,7 +66,9 @@ public class ControllerErrorAdvice {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(AccessDeniedException.class)
-    public ErrorResponse handleAccessDeniedPoint() { return new ErrorResponse("Permission not accessible to this resource."); }
+    public ErrorResponse handleAccessDeniedPoint() {
+        return new ErrorResponse("이 리소스에 대한 접근 권한이 없습니다.");
+    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RefreshTokenException.class)
@@ -93,7 +97,7 @@ public class ControllerErrorAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(OttNameNotFoundException.class)
     public ErrorResponse handleOttNameNotFound() {
-        return new ErrorResponse("해당하는 ott가 없습니다!");
+        return new ErrorResponse("해당하는 OTT가 없습니다!");
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
