@@ -24,8 +24,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CrawService {
-    private static String URL = "https://tvnng.com/find?keyword=";
-    private static String MOVIE_URL = "https://tvnng.com";
+    private static final String URL = "https://tvnng.com/find?keyword=";
+    private static final String MOVIE_URL = "https://tvnng.com";
 
     private final OttRepository ottRepository;
 
