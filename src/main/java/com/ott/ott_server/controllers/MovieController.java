@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,23 +30,22 @@ public class MovieController {
     private final CrawService crawService;
 
     @PostMapping
-    @ApiOperation(value = "영화 생성", notes = "주어진 정보를 받아 영화를 생성합니다.",
-            response = MovieResponseData.class)
-    public MovieResponseData create(@Valid @RequestBody MovieRequestData movieRequestData) {
+    @ApiOperation(value = "영화 생성", notes = "주어진 정보를 받아 영화를 생성하는 API")
+    public ResponseEntity<MovieResponseData> create(@Valid @RequestBody MovieRequestData movieRequestData) {
         Movie movie = movieService.registerMovie(movieRequestData);
-        return movie.toMovieResponseData();
+        return ResponseEntity.status(HttpStatus.CREATED).body(movie.toMovieResponseData());
     }
 
     @GetMapping("/lists")
-    @ApiOperation(value = "회원가입 성공 시 영화 리스트 보기", notes = "영화 리스트의 평점과 표지 이미지를 페이징 처리하여 가져옵니다.")
-    public Page<MovieListResponseData> getMovies(@PageableDefault(size = 10) Pageable pageable) {
-        return movieService.getMovieLists(pageable);
+    @ApiOperation(value = "회원가입 성공 시 영화 리스트 보기", notes = "영화 리스트의 평점과 표지 이미지를 페이징 처리하여 가져오는 API")
+    public ResponseEntity<Page<MovieListResponseData>> getMovies(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(movieService.getMovieLists(pageable));
     }
 
     @GetMapping("/search")
-    @ApiOperation(value = "영화 이름으로 검색", notes = "영화 이름에 검색어가 포함된 영화 리스트를 크롤링하여 가져옵니다.")
-    public Page<MovieResponseData> search(@RequestParam @ApiParam(value = "영화 이름") String name, Pageable pageable) throws IOException {
-        return crawService.getSearch(name, pageable);
+    @ApiOperation(value = "영화 이름으로 검색", notes = "영화 이름에 검색어가 포함된 영화 리스트를 크롤링하여 가져오는 API.")
+    public ResponseEntity<Page<MovieResponseData>> search(@RequestParam @ApiParam(value = "영화 이름") String name, Pageable pageable) throws IOException {
+        return ResponseEntity.ok(crawService.getSearch(name, pageable));
     }
 
 }
