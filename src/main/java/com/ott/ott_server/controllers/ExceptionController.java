@@ -18,6 +18,7 @@ public class ExceptionController {
     public void entryPointException() {
         throw new AuthenticationEntrypointException();
     }
+
     @ApiIgnore
     @GetMapping("/accessDenied")
     public void accessDeniedException() {

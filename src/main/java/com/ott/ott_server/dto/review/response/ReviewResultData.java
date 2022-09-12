@@ -1,7 +1,7 @@
-package com.ott.ott_server.dto.review;
+package com.ott.ott_server.dto.review.response;
 
-import com.ott.ott_server.dto.movie.MovieResponseData;
-import com.ott.ott_server.dto.user.UserProfileData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
+import com.ott.ott_server.dto.user.response.UserProfileData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;

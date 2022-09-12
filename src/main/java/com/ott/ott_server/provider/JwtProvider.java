@@ -1,7 +1,7 @@
 package com.ott.ott_server.provider;
 
 import com.ott.ott_server.application.CustomUserDetailsService;
-import com.ott.ott_server.dto.token.TokenDto;
+import com.ott.ott_server.dto.token.response.TokenDto;
 import com.ott.ott_server.errors.AuthenticationEntrypointException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -27,9 +26,9 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private String ROLES = "roles";
-    private final Long accessTokenValidMillisecond = 60 * 60 * 1000L; // 1 hour
-    private final Long refreshTokenValidMillisecond = 14 * 24 * 60 * 60 * 1000L; // 14 day
+    private static final String ROLES = "roles";
+    private static final Long accessTokenValidMillisecond = 60 * 60 * 1000L; // 1 hour
+    private static final Long refreshTokenValidMillisecond = 14 * 24 * 60 * 60 * 1000L; // 14 day
     private final CustomUserDetailsService userDetailsService;
 
     @PostConstruct
@@ -109,4 +108,18 @@ public class JwtProvider {
             return false;
         }
     }
+
+    // jwt 의 유효성 및 만료일자 확인
+    public boolean ExpiredToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token.");
+            return true;
+        } catch (Exception e) {
+            log.info("Invalid JWT token.");
+        }
+        return false;
+    }
+
 }

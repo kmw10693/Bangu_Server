@@ -7,21 +7,27 @@ import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.social.KakaoProfile;
 import com.ott.ott_server.dto.social.UserSocialLoginRequestDto;
 import com.ott.ott_server.dto.social.UserSocialSignupRequestDto;
-import com.ott.ott_server.dto.token.TokenDto;
-import com.ott.ott_server.dto.token.TokenRequestDto;
-import com.ott.ott_server.dto.user.*;
+import com.ott.ott_server.dto.token.response.TokenDto;
+import com.ott.ott_server.dto.token.request.TokenRequestDto;
+import com.ott.ott_server.dto.user.request.UserLoginRequestData;
+import com.ott.ott_server.dto.user.request.UserRegistrationData;
+import com.ott.ott_server.dto.user.response.UserSignupResponseData;
+import com.ott.ott_server.dto.user.response.UserSocialRegistrationData;
 import com.ott.ott_server.errors.CSocialAgreementException;
 import com.ott.ott_server.errors.UserNotFoundException;
 import com.ott.ott_server.provider.JwtProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Api(tags = "회원가입 API")

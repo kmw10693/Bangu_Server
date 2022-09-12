@@ -1,6 +1,6 @@
 package com.ott.ott_server.dto.review.response;
 
-import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.springframework.data.domain.Page;

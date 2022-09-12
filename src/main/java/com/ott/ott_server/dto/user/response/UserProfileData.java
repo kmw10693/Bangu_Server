@@ -1,4 +1,4 @@
-package com.ott.ott_server.dto.user;
+package com.ott.ott_server.dto.user.response;
 
 import com.ott.ott_server.domain.enums.Gender;
 import io.swagger.annotations.ApiModel;

@@ -1,4 +1,4 @@
-package com.ott.ott_server.dto.review;
+package com.ott.ott_server.dto.review.request;
 
 
 import io.swagger.annotations.ApiModel;

@@ -1,4 +1,4 @@
-package com.ott.ott_server.dto.movie;
+package com.ott.ott_server.dto.movie.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,4 +15,5 @@ public class MovieOttResponseData {
 
     @ApiModelProperty(value = "영화가 소속하는 OTT 명", example = "NETFLIX")
     private String ottName;
+
 }

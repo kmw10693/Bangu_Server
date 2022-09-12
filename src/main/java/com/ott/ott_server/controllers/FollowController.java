@@ -3,7 +3,6 @@ package com.ott.ott_server.controllers;
 import com.ott.ott_server.application.FollowService;
 import com.ott.ott_server.application.UserService;
 import com.ott.ott_server.domain.User;
-import com.ott.ott_server.utils.UserUtil;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ public class FollowController {
 
     private final FollowService followService;
     private final UserService userService;
-    private final UserUtil userUtil;
 
     @ApiImplicitParam(
             name = "X-AUTH-TOKEN",

@@ -1,8 +1,8 @@
 package com.ott.ott_server.application;
 
 import com.ott.ott_server.domain.Ott;
-import com.ott.ott_server.dto.movie.MovieOttResponseData;
-import com.ott.ott_server.dto.movie.MovieResponseData;
+import com.ott.ott_server.dto.movie.response.MovieOttResponseData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
 import com.ott.ott_server.errors.OttNameNotFoundException;
 import com.ott.ott_server.infra.OttRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CrawService {
-    private static String URL = "https://tvnng.com/find?keyword=";
-    private static String MOVIE_URL = "https://tvnng.com";
+    private static final String URL = "https://tvnng.com/find?keyword=";
+    private static final String MOVIE_URL = "https://tvnng.com";
 
     private final OttRepository ottRepository;
 
@@ -154,4 +154,3 @@ public class CrawService {
     }
 
 }
-

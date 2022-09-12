@@ -5,10 +5,11 @@ import com.ott.ott_server.domain.Ott;
 import com.ott.ott_server.domain.RefreshToken;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.UserOtt;
-import com.ott.ott_server.dto.token.TokenDto;
-import com.ott.ott_server.dto.user.UserPasswordModifyData;
-import com.ott.ott_server.dto.user.UserRegistrationData;
-import com.ott.ott_server.dto.user.UserSocialRegistrationData;
+import com.ott.ott_server.domain.enums.OttNames;
+import com.ott.ott_server.dto.token.response.TokenDto;
+import com.ott.ott_server.dto.user.request.UserRegistrationData;
+import com.ott.ott_server.dto.user.request.UserPasswordModifyData;
+import com.ott.ott_server.dto.user.response.UserSocialRegistrationData;
 import com.ott.ott_server.errors.*;
 import com.ott.ott_server.infra.OttRepository;
 import com.ott.ott_server.infra.RefreshTokenRepository;
@@ -29,7 +30,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserOttRepository userOttRepository;
     private final OttRepository ottRepository;
-    private final Mapper mapper;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
@@ -67,19 +67,19 @@ public class UserService {
 
     private void checkSubscribe(UserRegistrationData userRegistrationData, User user) {
         if (userRegistrationData.isNetflix()) {
-            Ott ott = findByOttName("NETFLIX");
+            Ott ott = findByOttName(OttNames.NETFLIX.value());
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isTving()) {
-            Ott ott = findByOttName("TVING");
+            Ott ott = findByOttName(OttNames.TVING.value());
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWatcha()) {
-            Ott ott = findByOttName("WATCHAPLAY");
+            Ott ott = findByOttName(OttNames.WATCHA.value());
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWavve()) {
-            Ott ott = findByOttName("WAVVE");
+            Ott ott = findByOttName(OttNames.WAVVE.value());
             setUserOtt(user, ott);
         }
 
@@ -136,6 +136,7 @@ public class UserService {
      */
     public TokenDto login(String email, String password) {
         User user = userRepository.findByEmail(email).orElseThrow(EmailLoginFailedException::new);
+
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new EmailLoginFailedException();
 
@@ -143,12 +144,13 @@ public class UserService {
         TokenDto tokenDto = jwtProvider.createTokenDto(user.getId(), user.getRoles());
 
         // RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(user.getId())
-                .token(tokenDto.getRefreshToken())
-                .build();
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(user.getId())
+                .orElseGet(() -> refreshTokenRepository.save(RefreshToken.builder()
+                        .key(user.getId())
+                        .token(tokenDto.getRefreshToken())
+                        .build()));
 
-        refreshTokenRepository.save(refreshToken);
+        refreshToken.updateToken(tokenDto.getRefreshToken());
         return tokenDto;
     }
 

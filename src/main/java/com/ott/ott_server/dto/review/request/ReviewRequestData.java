@@ -1,6 +1,6 @@
-package com.ott.ott_server.dto.review;
+package com.ott.ott_server.dto.review.request;
 
-import com.ott.ott_server.dto.movie.MovieOttResponseData;
+import com.ott.ott_server.dto.movie.response.MovieOttResponseData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -13,8 +13,8 @@ import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @ApiModel(value="리뷰 등록 요청 정보")
+@AllArgsConstructor
 public class ReviewRequestData {
 
     @ApiModelProperty(value = "제목", example = "셜록")

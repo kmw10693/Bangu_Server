@@ -1,18 +1,12 @@
-package com.ott.ott_server.dto.review;
+package com.ott.ott_server.dto.review.response;
 
-import com.ott.ott_server.domain.enums.Gender;
-import com.ott.ott_server.dto.movie.MovieResponseData;
-import com.ott.ott_server.dto.user.UserOttResponseData;
-import com.ott.ott_server.dto.user.UserProfileData;
+import com.ott.ott_server.dto.movie.response.MovieResponseData;
+import com.ott.ott_server.dto.user.response.UserProfileData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

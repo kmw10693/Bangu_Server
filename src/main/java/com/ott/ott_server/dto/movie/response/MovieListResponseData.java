@@ -1,4 +1,4 @@
-package com.ott.ott_server.dto.movie;
+package com.ott.ott_server.dto.movie.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,14 +7,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.OptionalDouble;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ApiModel(value = "회원가입 축하 영화 결과 정보")
-public class MovieListRes {
+public class MovieListResponseData {
 
     @ApiModelProperty(value = "영화 식별자", example = "1")
     private Long movieId;

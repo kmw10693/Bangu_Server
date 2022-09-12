@@ -1,6 +1,6 @@
 package com.ott.ott_server.domain;
 
-import com.ott.ott_server.dto.user.UserOttResponseData;
+import com.ott.ott_server.dto.user.response.UserOttResponseData;
 import lombok.*;
 
 import javax.persistence.*;

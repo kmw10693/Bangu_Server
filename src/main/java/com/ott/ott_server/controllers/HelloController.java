@@ -11,5 +11,7 @@ public class HelloController {
 
     @GetMapping
     @ApiIgnore
-    public String sayHello() { return "Hello world!"; }
+    public String sayHello() {
+        return "Hello world!";
+    }
 }
