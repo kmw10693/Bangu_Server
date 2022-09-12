@@ -30,7 +30,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserOttRepository userOttRepository;
     private final OttRepository ottRepository;
-    private final Mapper mapper;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
@@ -137,6 +136,7 @@ public class UserService {
      */
     public TokenDto login(String email, String password) {
         User user = userRepository.findByEmail(email).orElseThrow(EmailLoginFailedException::new);
+
         if (!passwordEncoder.matches(password, user.getPassword()))
             throw new EmailLoginFailedException();
 
@@ -144,12 +144,13 @@ public class UserService {
         TokenDto tokenDto = jwtProvider.createTokenDto(user.getId(), user.getRoles());
 
         // RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(user.getId())
-                .token(tokenDto.getRefreshToken())
-                .build();
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(user.getId())
+                .orElseGet(() -> refreshTokenRepository.save(RefreshToken.builder()
+                        .key(user.getId())
+                        .token(tokenDto.getRefreshToken())
+                        .build()));
 
-        refreshTokenRepository.save(refreshToken);
+        refreshToken.updateToken(tokenDto.getRefreshToken());
         return tokenDto;
     }
 

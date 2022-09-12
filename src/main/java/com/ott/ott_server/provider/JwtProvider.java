@@ -26,9 +26,9 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private String ROLES = "roles";
-    private final Long accessTokenValidMillisecond = 60 * 60 * 1000L; // 1 hour
-    private final Long refreshTokenValidMillisecond = 14 * 24 * 60 * 60 * 1000L; // 14 day
+    private static final String ROLES = "roles";
+    private static final Long accessTokenValidMillisecond = 60 * 60 * 1000L; // 1 hour
+    private static final Long refreshTokenValidMillisecond = 14 * 24 * 60 * 60 * 1000L; // 14 day
     private final CustomUserDetailsService userDetailsService;
 
     @PostConstruct
@@ -108,4 +108,18 @@ public class JwtProvider {
             return false;
         }
     }
+
+    // jwt 의 유효성 및 만료일자 확인
+    public boolean ExpiredToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token.");
+            return true;
+        } catch (Exception e) {
+            log.info("Invalid JWT token.");
+        }
+        return false;
+    }
+
 }

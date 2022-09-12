@@ -124,4 +124,10 @@ public class ControllerErrorAdvice {
         return new ErrorResponse("해당하는 OTT 이름이 존재합니다!");
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(AccessTokenException.class)
+    public ErrorResponse handleAccessTokenPoint() {
+        return new ErrorResponse("엑세스 토큰이 만료되지 않았거나 유효하지 않은 엑세스 토큰입니다.");
+    }
+
 }

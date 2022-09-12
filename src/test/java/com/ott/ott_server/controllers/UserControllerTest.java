@@ -148,5 +148,4 @@ class UserControllerTest {
         verify(userService).isDuplicateNickname("bangu");
     }
 
-
 }

@@ -4,6 +4,7 @@ import com.ott.ott_server.domain.RefreshToken;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.dto.token.response.TokenDto;
 import com.ott.ott_server.dto.token.request.TokenRequestDto;
+import com.ott.ott_server.errors.AccessTokenException;
 import com.ott.ott_server.errors.RefreshTokenException;
 import com.ott.ott_server.errors.UserNotFoundException;
 import com.ott.ott_server.infra.RefreshTokenRepository;
@@ -26,6 +27,11 @@ public class SecurityService {
 
     @Transactional
     public TokenDto reissue(TokenRequestDto tokenRequestDto) {
+
+        if (!jwtProvider.ExpiredToken(tokenRequestDto.getAccessToken())) {
+            throw new AccessTokenException();
+        }
+
         // 만료된 refresh token 에러
         if (!jwtProvider.validationToken(tokenRequestDto.getRefreshToken())) {
             throw new RefreshTokenException();
@@ -36,7 +42,7 @@ public class SecurityService {
         Authentication authentication = jwtProvider.getAuthentication(accessToken);
 
         // user pk로 유저 검색 / repo 에 저장된 Refresh Token 이 없음
-        User user = userRepository.findByEmail(authentication.getName())
+        User user = userRepository.findById(Long.parseLong(authentication.getName()))
                 .orElseThrow(UserNotFoundException::new);
         RefreshToken refreshToken = tokenRepository.findByKey(user.getId())
                 .orElseThrow(RefreshTokenException::new);
@@ -47,10 +53,11 @@ public class SecurityService {
 
         // AccessToken, RefreshToken 토큰 재발급, 리프레쉬 토큰 저장
         TokenDto newCreatedToken = jwtProvider.createTokenDto(user.getId(), user.getRoles());
-        RefreshToken updateRefreshToken = refreshToken.updateToken(newCreatedToken.getRefreshToken());
-        tokenRepository.save(updateRefreshToken);
+        refreshToken.updateToken(newCreatedToken.getRefreshToken());
 
         return newCreatedToken;
     }
+
+
 
 }
