@@ -2,7 +2,7 @@ package com.ott.ott_server.application;
 
 import com.ott.ott_server.domain.*;
 import com.ott.ott_server.domain.enums.Gender;
-import com.ott.ott_server.dto.movie.request.MovieOttRequestData;
+import com.ott.ott_server.domain.enums.OttNames;
 import com.ott.ott_server.dto.movie.response.MovieOttResponseData;
 import com.ott.ott_server.dto.movie.response.MovieResponseData;
 import com.ott.ott_server.dto.review.request.GenreRequestData;
@@ -84,19 +84,19 @@ public class ReviewService {
 
     private void checkSubscribe(ReviewRequestData reviewRequestData, Review review) {
         if (reviewRequestData.getReviewOtt().isNetflix()) {
-            Ott ott = findIdByOttName("NETFLIX");
+            Ott ott = findIdByOttName(OttNames.NETFLIX.value());
             setReviewOtt(review, ott);
         }
         if (reviewRequestData.getReviewOtt().isTving()) {
-            Ott ott = findIdByOttName("TVING");
+            Ott ott = findIdByOttName(OttNames.TVING.value());
             setReviewOtt(review, ott);
         }
         if (reviewRequestData.getReviewOtt().isWatcha()) {
-            Ott ott = findIdByOttName("WATCHAPLAY");
+            Ott ott = findIdByOttName(OttNames.WATCHA.value());
             setReviewOtt(review, ott);
         }
         if (reviewRequestData.getReviewOtt().isWavve()) {
-            Ott ott = findIdByOttName("WAVVE");
+            Ott ott = findIdByOttName(OttNames.WAVVE.value());
             setReviewOtt(review, ott);
         }
     }
@@ -202,7 +202,7 @@ public class ReviewService {
                     .build());
         }
 
-        final int start = (int)pageable.getOffset();
+        final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), reviewRes.size());
         return new ReviewSearchData(movieResponseData, new PageImpl<>(reviewRes.subList(start, end), pageable, reviewRes.size()));
     }
@@ -260,7 +260,6 @@ public class ReviewService {
         Gender gender = user.getGender();
         List<Review> reviews;
 
-
         if (sort == true) {
             reviews = reviewRepository.findByMovieTitleContainingAndUserBirthAndUserGenderAndDeletedFalseOrderByIdDesc(title, birth, gender);
         } else {
@@ -279,8 +278,6 @@ public class ReviewService {
      */
     public Page<ReviewResponseData> findAll(User user, String type, Pageable pageable) {
 
-        Long birth = user.getBirth();
-        Gender gender = user.getGender();
         List<Review> reviews = new ArrayList<>();
 
         List<UserOtt> userOtt = user.getUserOtt();
@@ -320,7 +317,7 @@ public class ReviewService {
 
         checkFollowing(user, reviewResponseData);
 
-        final int start = (int)pageable.getOffset();
+        final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), reviewResponseData.size());
         return new PageImpl<>(reviewResponseData.subList(start, end), pageable, reviews.size());
     }
@@ -375,7 +372,7 @@ public class ReviewService {
         List<BookMark> bookMarks = bookMarkRepository.findByUser(user);
         List<ReviewResponseData> reviews = bookMarks.stream().map(r -> r.getReview().toReviewResponseData(checkBookmark(r.getReview(), user))).collect(Collectors.toList());
 
-        final int start = (int)pageable.getOffset();
+        final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), reviews.size());
         return new PageImpl<>(reviews.subList(start, end), pageable, reviews.size());
     }
