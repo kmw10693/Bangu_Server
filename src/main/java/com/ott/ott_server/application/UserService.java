@@ -5,6 +5,7 @@ import com.ott.ott_server.domain.Ott;
 import com.ott.ott_server.domain.RefreshToken;
 import com.ott.ott_server.domain.User;
 import com.ott.ott_server.domain.UserOtt;
+import com.ott.ott_server.domain.enums.OttNames;
 import com.ott.ott_server.dto.token.response.TokenDto;
 import com.ott.ott_server.dto.user.request.UserRegistrationData;
 import com.ott.ott_server.dto.user.request.UserPasswordModifyData;
@@ -67,19 +68,19 @@ public class UserService {
 
     private void checkSubscribe(UserRegistrationData userRegistrationData, User user) {
         if (userRegistrationData.isNetflix()) {
-            Ott ott = findByOttName("NETFLIX");
+            Ott ott = findByOttName(OttNames.NETFLIX.value());
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isTving()) {
-            Ott ott = findByOttName("TVING");
+            Ott ott = findByOttName(OttNames.TVING.value());
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWatcha()) {
-            Ott ott = findByOttName("WATCHAPLAY");
+            Ott ott = findByOttName(OttNames.WATCHA.value());
             setUserOtt(user, ott);
         }
         if (userRegistrationData.isWavve()) {
-            Ott ott = findByOttName("WAVVE");
+            Ott ott = findByOttName(OttNames.WAVVE.value());
             setUserOtt(user, ott);
         }
 
