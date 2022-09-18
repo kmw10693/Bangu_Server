@@ -15,7 +15,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     Page<Movie> findAllByDeletedFalse(Pageable pageable);
 
-    List<Movie> findByOttsOttNameAndTitleContainingAndDeletedIsFalse(String ott, String title);
+    List<Movie> findByTitleContainingAndDeletedIsFalse(String title);
 
     boolean existsByTitle(String title);
 

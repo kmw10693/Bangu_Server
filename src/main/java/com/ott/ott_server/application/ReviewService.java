@@ -127,53 +127,31 @@ public class ReviewService {
     }
 
     /**
-     * ott와 genre 별로 리뷰 가져오기
-     *
-     * @param ott
-     * @param genre
+     * 리뷰 상세 가져오기
      */
-    public ReviewSearchData getReviews(String ott, GenreRequestData genre, String type, String title, boolean sortType, Pageable pageable) {
+    public ReviewSearchData getReviews(String type, String title, boolean sortType, Pageable pageable) {
 
         User user = userUtil.findCurrentUser();
         Long birth = user.getBirth();
         Gender gender = user.getGender();
         List<Review> reviews = null;
-        List<Review> reviewsByGenre = new ArrayList<>();
 
         if (type.equals("home")) {
             if (sortType == false) {
-                reviews = reviewRepository.findByMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(ott, title);
+                reviews = reviewRepository.findByMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(title);
             } else {
-                reviews = reviewRepository.findByMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(ott, title, birth, gender);
+                reviews = reviewRepository.findByMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(title, birth, gender);
             }
         } else if (type.equals("mypage")) {
-            reviews = reviewRepository.findByUserAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(user, ott, title);
+            reviews = reviewRepository.findByUserAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(user, title);
         } else if (type.equals("feed")) {
             List<Follow> followList = followRepository.findByFromUser(user);
             List<User> followings = new ArrayList<>();
             followList.stream().forEach(r -> followings.add(r.getToUser()));
-            reviews = reviewRepository.findByUserInAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(followings, ott, title);
+            reviews = reviewRepository.findByUserInAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(followings, title);
         }
 
-        List<Movie> movie = movieRepository.findByOttsOttNameAndTitleContainingAndDeletedIsFalse(ott, title);
-        List<Movie> movieByGenre = new ArrayList<>();
-
-        if (genre.getGenre() != null) {
-            for (String s : genre.getGenre()) {
-                for (Review r : reviews) {
-                    if (r.getMovie().getGenre().contains(s)) {
-                        reviewsByGenre.add(r);
-                    }
-                }
-                for (Movie m : movie) {
-                    if (m.getGenre().contains(s)) {
-                        movieByGenre.add(m);
-                    }
-                }
-            }
-            reviews = reviewsByGenre;
-            movie = movieByGenre;
-        }
+        List<Movie> movie = movieRepository.findByTitleContainingAndDeletedIsFalse(title);
 
         List<MovieResponseData> movieResponseData = movie.stream()
                 .map(Movie::toMovieResponseData).collect(Collectors.toList());
