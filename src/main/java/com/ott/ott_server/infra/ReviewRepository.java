@@ -18,9 +18,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByIdAndDeletedIsFalse(Long id);
 
     // 장르, 영화 이름 별로 최신순 가져오기
-    List<Review> findByMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(String ott, String title);
+    List<Review> findByMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(String title);
 
-    List<Review> findByMovieOttsOttNameAndMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(String ott, String title, Long birth, Gender gender);
+    List<Review> findByMovieTitleContainingAndUserBirthAndUserGenderAndDeletedIsFalseOrderByIdDesc(String title, Long birth, Gender gender);
 
     List<Review> findByMovieTitleContainingAndUserBirthAndUserGenderAndDeletedFalseOrderByIdDesc(String title, Long birth, Gender gender);
 
@@ -39,9 +39,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByUserIdAndDeletedFalseOrderByIdDesc(Long userId, Pageable pageable);
 
     // 본 계정이 작성한 리뷰 가져오기
-    List<Review> findByUserAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(User user, String ott, String title);
+    List<Review> findByUserAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(User user, String title);
 
     // 팔로우한 사람 리뷰 가져오기
-    List<Review> findByUserInAndMovieOttsOttNameAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(List<User> users, String ott, String title);
+    List<Review> findByUserInAndMovieTitleContainingAndDeletedIsFalseOrderByIdDesc(List<User> users, String title);
 
 }

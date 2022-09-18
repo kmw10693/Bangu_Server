@@ -31,6 +31,7 @@ public class ReviewController {
 
     /**
      * 리뷰 등록
+     *
      * @return
      */
     @ApiImplicitParam(
@@ -48,6 +49,7 @@ public class ReviewController {
 
     /**
      * 리뷰 상세 조회
+     *
      * @param id
      * @return
      */
@@ -90,6 +92,7 @@ public class ReviewController {
 
     /**
      * 리뷰 삭제
+     *
      * @param id
      */
     @ApiImplicitParams({
@@ -109,23 +112,18 @@ public class ReviewController {
 
     /**
      * ott, 장르 별 리뷰 조회 & 제목
-     *
-     * @param ott
-     * @param genre
      */
-    @PostMapping("/{ott}")
+    @GetMapping("/movie")
     @ApiImplicitParam(
             name = "X-AUTH-TOKEN",
             value = "로그인 성공 후 AccessToken",
             required = true, dataType = "String", paramType = "header")
-    @ApiOperation(value = "영화 이름으로 리뷰 조회", notes = "ott와 장르, 제목으로 리뷰를 검색 합니다.")
-    public ReviewSearchData list(@PathVariable("ott")
-                                 @ApiParam(value = "ott 이름 EX) 넷플릭스: NETFLIX, 왓챠: WATCHAPLAY, 웨이브: WAVVE, 티빙: TVING 으로 입력해주세요.") String ott,
-                                 GenreRequestData genre,
-                                 @RequestParam @ApiParam(value = "검색 범위(홈: home, 내 방구석: mypage, 피드: feed)", example = "home") String type,
-                                 @RequestParam @ApiParam(value = "영화 제목", example = "비밀의 숲") String title,
-                                 @RequestParam @ApiParam(value = "성별/나이대 정렬 여부(홈에서만 가능)", example = "false") boolean sortType, Pageable pageable) {
-        return reviewService.getReviews(ott, genre, type, title, sortType, pageable);
+    @ApiOperation(value = "영화 이름으로 리뷰 조회", notes = "장르, 영화 제목으로 리뷰를 검색하는 API")
+    public ReviewSearchData list(
+            @RequestParam @ApiParam(value = "검색 범위(홈: home, 내 방구석: mypage, 피드: feed)", example = "home") String type,
+            @RequestParam @ApiParam(value = "영화 제목", example = "비밀의 숲") String title,
+            @RequestParam @ApiParam(value = "성별/나이대 정렬 여부(홈에서만 가능)", example = "false") boolean sortType, Pageable pageable) {
+        return reviewService.getReviews(type, title, sortType, pageable);
     }
 
     /**
@@ -188,8 +186,8 @@ public class ReviewController {
             required = true, dataType = "String", paramType = "header")
     @ApiOperation(value = "리뷰 북마크 및 북마크 해제 하기", notes = "리뷰를 북마크시 true, 북마크 해제시 false를 반환 합니다.")
     @ApiResponse(responseCode = "200", description = "북마크 및 북마크 해제를 성공적으로 한 경우")
-    public ResponseEntity<Boolean> bookmark(@PathVariable @ApiParam(value = "리뷰 인덱스", example = "1") Long reviewId){
-            return ResponseEntity.ok(reviewService.bookmark(reviewId));
+    public ResponseEntity<Boolean> bookmark(@PathVariable @ApiParam(value = "리뷰 인덱스", example = "1") Long reviewId) {
+        return ResponseEntity.ok(reviewService.bookmark(reviewId));
     }
 
 }
